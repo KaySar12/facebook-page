@@ -14,13 +14,13 @@ import { JwtRefreshTokenStrategy } from './strategy/jwt-refresh-token.strategy';
 
 @Module({
   imports: [
-    PassportModule,
+    PassportModule.register({ session: true }),
     JwtModule.registerAsync({
       useFactory: async () => {
         return {
           secret: 'authenSecret',
           signOptions: {
-            expiresIn: 360000 ,
+            expiresIn: 360000,
           },
           global: true,
         };
@@ -40,4 +40,4 @@ import { JwtRefreshTokenStrategy } from './strategy/jwt-refresh-token.strategy';
   ],
   exports: [AuthService, JwtStrategy, PassportModule, UserService, JwtModule],
 })
-export class AuthModule {}
+export class AuthModule { }

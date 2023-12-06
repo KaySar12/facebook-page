@@ -7,7 +7,8 @@ import { join } from 'path';
 import * as hbs from 'hbs';
 import * as hbsUtils from 'hbs-utils';
 import { format } from 'date-fns';
-import * as session from 'express-session';
+import * as session from "express-session"
+import * as passport from "passport"
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(
     AppModule
@@ -34,6 +35,8 @@ async function bootstrap() {
       resave: false,
       saveUninitialized: false,
     }),)
+  app.use(passport.initialize())
+  app.use(passport.session())
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   hbs.registerPartials(join(__dirname, '..', 'views/layouts'));

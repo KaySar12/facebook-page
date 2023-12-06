@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Param, Post, Query, Redirect, Render, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Redirect, Render, Req, UseGuards } from '@nestjs/common';
 import { CreateNewPostDto } from 'src/facebook/dto/createNewPost.dto';
 import { FacebookService } from 'src/facebook/facebook.service';
 import { PageDto } from './dto/page.dto';
 import { access } from 'fs';
+import { FacebookAuthGuard } from 'src/facebook/facebook.guard';
 @Controller('/admin/post')
+@UseGuards(FacebookAuthGuard)
 export class AdminPostController {
     constructor(private readonly facebookService: FacebookService) { }
     @Get('/')

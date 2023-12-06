@@ -1,7 +1,9 @@
-import { Controller, Get, Query, Render } from "@nestjs/common";
+import { Controller, Get, Query, Render, UseGuards } from "@nestjs/common";
+import { FacebookAuthGuard } from "src/facebook/facebook.guard";
 import { FacebookService } from "src/facebook/facebook.service";
 
 @Controller('/admin/conversations')
+@UseGuards(FacebookAuthGuard)
 export class AdminConversationController {
     constructor(private readonly facebookService: FacebookService) {
     }
@@ -9,7 +11,6 @@ export class AdminConversationController {
     @Render('page/admin/conversation/index')
     async index() {
         const getConversations = await this.facebookService.getPageConversations();
-        getConversations.data;
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin - Manage Conversations';
         viewData['conversations'] = getConversations.data;
@@ -30,4 +31,5 @@ export class AdminConversationController {
             viewData: viewData
         }
     }
+    
 }

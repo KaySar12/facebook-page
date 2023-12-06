@@ -1,11 +1,14 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common"
 
 @Injectable()
 export class FacebookAuthGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest();
-    console.log(request);
-    // Check if the user is authenticated with Facebook
-    return !!request.user;
+  async canActivate(context: ExecutionContext) {
+    console.log('Facebook Auth Guard')
+    const request = context.switchToHttp().getRequest()
+    if (!request.isAuthenticated()) {
+      const response = context.switchToHttp().getResponse()
+      return response.redirect('/admin/login');
+    }
+    return request.isAuthenticated();
   }
 }

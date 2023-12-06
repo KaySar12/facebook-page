@@ -1,25 +1,51 @@
-import { UseGuards, Controller, Get, Param, Post, Query, Redirect, Render, Req, Res } from "@nestjs/common";
+import { UseGuards, Controller, Get, Request, Post, Query, Redirect, Render, Req, Res, HttpStatus } from "@nestjs/common";
 import { AuthGuard, } from "@nestjs/passport";
-import { Request, query } from "express";
+import { query } from "express";
 import { FacebookAuthGuard } from "src/facebook/facebook.guard";
 import { FacebookService } from "src/facebook/facebook.service";
 import { Session } from 'express-session';
+import { LocalAuthGuard } from "src/facebook/local-facebook-auth.guard";
+import { FacebookStrategy } from "src/facebook/facebook.strategy";
 @Controller('/admin')
 export class AdminController {
     constructor(private readonly facebookService: FacebookService) {
     }
-    @Get("/login")
+
+    @Get('/login')
     @Render('page/admin/login/index')
-    @UseGuards(AuthGuard("facebook"))
-    async facebookLogin(): Promise<any> {
-        console.log('login Page')
+    async facebookLoginView(): Promise<any> {
+        const viewData = [];
+        viewData['title'] = 'Admin Page - Admin - Login Page';
+        return {
+            viewData: viewData,
+        };
+    }
+    //Get / logout
+    @Get('/logout')
+    logout(@Request() req, @Res() res: any): any {
+        req.session.destroy();
+        return res.redirect('/admin/login')
+    }
+    @Get("/action/login")
+    @UseGuards(AuthGuard('facebook'))
+    async LoginAction(): Promise<any> {
+        console.log('login action')
+        return HttpStatus.OK;
+    }
+    @UseGuards(LocalAuthGuard)
+    @Get("/action/redirect")
+    async facebookLoginRedirect(@Req() req: any, @Res() res: any): Promise<any> {
+        return res.redirect('/admin')
     }
 
     @Get('/')
-    @UseGuards(AuthGuard("facebook"))
+    @UseGuards(FacebookAuthGuard)
     @Render('page/admin/index')
-    async index(@Req() req: Request, @Res() res) {
-        req.session['accesskey'] = req.user;
+    async index(@Req() req: any, @Res() res) {
+        if (!req.user) {
+            return res.redirect('/admin/login');
+          }
+        
         const pageDetail = await this.facebookService.getPageDetail();
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin - Manage Home Page';
@@ -29,16 +55,10 @@ export class AdminController {
         };
     }
     @Get("/about")
-    //@UseGuards(FacebookAuthGuard) // Use the custom FacebookAuthGuard
+    @UseGuards(FacebookAuthGuard)
     @Render('page/admin/about/index')
     async about(@Req() req: any, @Res() res) {
-        // Check if user is authenticated
-        if (!req.session['accesskey']) {
-            // Handle unauthenticated access, e.g., redirect to login page
-            return res.redirect('/admin/login');
-        }
 
-        // User is authenticated, proceed with rendering the about page
         const response = await this.facebookService.getPageDetail();
         const viewData = [];
         viewData['id'] = response.id || 'Unavailable';
@@ -48,4 +68,11 @@ export class AdminController {
             viewData: viewData,
         };
     }
+
+    @Get('/protected')
+    @UseGuards(FacebookAuthGuard)
+    getHello(@Request() req): string {
+        return req.user;
+    }
+
 }

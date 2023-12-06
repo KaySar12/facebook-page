@@ -7,15 +7,17 @@ import { CreateNewPostDto } from './dto/createNewPost.dto';
 import { SendMessageDto } from './dto/sendMessage.dto';
 @Injectable()
 export class FacebookService {
-    private userAccessToken: Promise<string>
-    private pageAccessToken: Promise<string>
+    private userAccessToken: string
+    private pageAccessToken: string
     constructor(private configService: ConfigService) {
-        this.userAccessToken = this.getUserLongLivesAccessToken();
-        this.pageAccessToken = this.getPageAccessToken();
+        this.userAccessToken = 'EAAPpVqwgr9cBO1KIn0WLXphpIm4okW0bR8C27sa22HeIGqsu55fKAnu4ooX1gSDMD62ZB1SwtDhUq0bgn6EBlz1JUW5fUvijs2YZC5t26vn7jTlja8f4fGHjDGO6WVGOwxGTQVbHn3LZCU4IP0ZAo8HZC0hdpUlqdDR2RXpKdIWnbqE1O8WeU427w'
+        //this.getUserLongLivesAccessToken();
+        this.pageAccessToken = 'EAAPpVqwgr9cBO5LlZCTmcpQhH3qootQohfpykrMktlIVrZAAxeeiTfzQg7yBF6yBmjjw9QbZCRMGJx1gPTwFL1TEZCqHD1EHoxh3lWLZCwYjUPXKMqyzw8mngvMWOhobGhFLpnh5txvDqCC15LqaZC8eaxZCPZBSmu1HSnkOIQjC6qnK8Q5GbCLVr3mTWLjZCZBtYZD'
+        //this.getPageAccessToken();
     }
 
     async getUserLongLivesAccessToken() {
-        const userAccessToken = 'EAAPpVqwgr9cBO1LHAfOnI0m9reixkopDmZBSzYJuJuFctk1yhmZAjFbv0zr7kIZCcvBDHmDAhUz9QOThJJ2aD8CKiNFhhjYZCD7sIgzZBA76GDhRZAlPO4M0eZA4QSZCM2ZBYFekt4EVPdvZAjk5s3SWWlYbiQCVWgAfCJSCW4XkLro62tGAs90ZAiyd8ug';
+        const userAccessToken = 'EAAPpVqwgr9cBO1KIn0WLXphpIm4okW0bR8C27sa22HeIGqsu55fKAnu4ooX1gSDMD62ZB1SwtDhUq0bgn6EBlz1JUW5fUvijs2YZC5t26vn7jTlja8f4fGHjDGO6WVGOwxGTQVbHn3LZCU4IP0ZAo8HZC0hdpUlqdDR2RXpKdIWnbqE1O8WeU427w';
         const options = {
             method: "GET",
             url: `https://graph.facebook.com/v18.0/oauth/access_token?grant_type=fb_exchange_token&client_id=1100983394414551&client_secret=6d4c80736b6935e9ae26c5a50a484ba0&fb_exchange_token=${userAccessToken}`,
@@ -28,14 +30,14 @@ export class FacebookService {
             // console.log(response.data);
             return response.data.access_token;
         } catch (error) {
-            console.error(error);
+            console.error('error at getUserLongLivesAccessToken method');
         }
     }
     async getPageAccessToken(): Promise<any> {
         const accessToken = await this.userAccessToken;
         const options = {
             method: 'GET',
-            url: `https://graph.facebook.com/1425721644676951/accounts`,
+            url: `https://graph.facebook.com/me/accounts`,
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
                 'Authorization': `Bearer ${accessToken} `
@@ -43,15 +45,15 @@ export class FacebookService {
         }
         try {
             const response = await axios.request(options);
-            // console.log(response.data);
+            //console.log(response.data);
             return response.data.data[0].access_token;
         } catch (error) {
-            console.error(error);
+            console.error('error at getPageAccess method');
         }
     }
     async getPageDetail() {
         const accessToken = await this.pageAccessToken;
-       // console.log(accessToken);
+        // console.log(accessToken);
         const fields = 'link,followers_count,fan_count,name,phone,albums{photos{id,link,picture}},about,picture{url,height,width,cache_key,is_silhouette},release_date,location,current_location,general_info,personal_info,engagement,featured_video,emails,posts{from,full_picture,icon,id,created_time,likes{id},comments{id},status_type,permalink_url,message}'
         const options = {
             method: 'GET',

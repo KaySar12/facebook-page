@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Param, Post, Query, Redirect, Render } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Query, Redirect, Render, UseGuards } from "@nestjs/common";
 import { query } from "express";
+import { FacebookAuthGuard } from "src/facebook/facebook.guard";
 import { FacebookService } from "src/facebook/facebook.service";
 
 
 @Controller('/admin/comment')
+@UseGuards(FacebookAuthGuard)
 export class AdminCommentController {
     constructor(private readonly facebookService: FacebookService) {
     }
