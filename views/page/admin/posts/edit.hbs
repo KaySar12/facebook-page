@@ -1,0 +1,41 @@
+{{#> adminLayoutManagement}}
+{{#*inline "content"}}
+<div class="card mb-4">
+    <div class="card-header">
+        Edit Post
+    </div>
+    <div class="card-body">
+        {{#with viewData.post}}
+        <form method="POST" action="/admin/post/{{this.id}}/update">
+            <div class="row">
+                <div class="col">
+                    <div class="mb-3 row">
+                        <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Published:</label>
+                        <div class="col-lg-10 col-md-6 col-sm-12">
+                            <select name='published' id='publishedSelect' class='form-control'>
+                                <option>True</option>
+                                <option>False</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="mb-3 row">
+                        <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Link:</label>
+                        <div class="col-lg-10 col-md-6 col-sm-12">
+                            <input name="link" value="{{this.link}}" type="text" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Message</label>
+                <textarea class="form-control" name="message" rows="3" required>{{this.message}}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Edit</button>
+        </form>
+        {{/with}}
+    </div>
+</div>
+{{/inline}}
+{{/adminLayoutManagement}}

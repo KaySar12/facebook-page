@@ -1,0 +1,13 @@
+server:
+  port: 3001
+
+db:
+  type: 'postgres'
+  port: 5432
+  database: 'test-taskmanagement'
+  username: 'postgres'
+  password: 'Convitcon12'
+jwt:
+ expiresIn: 3600
+ secret: 'authenSecret'
+redis_host: cache

@@ -1,0 +1,104 @@
+{{#> adminLayoutManagement}}
+{{#*inline "content"}}
+<div class="card mb-4">
+    <div class="card-header">
+        Create New Post
+    </div>
+    <div class="card-body">
+        <form method="POST" action="/admin/post/create">
+            <div class="row">
+                <div class="col">
+                    <div class="mb-3 row">
+                        <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Published:</label>
+                        <div class="col-lg-10 col-md-6 col-sm-12">
+                            <select name='published' id='publishedSelect' class='form-control'>
+                                <option>True</option>
+                                <option>False</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="mb-3 row">
+                        <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Link:</label>
+                        <div class="col-lg-10 col-md-6 col-sm-12">
+                            <input name="link" type="text" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Message</label>
+                <textarea class="form-control" name="message" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        Manage Posts
+    </div>
+    <div class="card-body">
+        {{#if viewData.posts}}
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Create Time</th>
+                    <th scope="col">Message</th>
+                    <th scope="col">Attachments</th>
+                    <th scope="col">Comments</th>
+                    <th scope="col">Likes</th>
+                    <th scope="col">Edit</th>
+                    <th scope="col">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{!-- single page data --}}
+                {{#each viewData.posts}}
+                <tr>
+                    <td>{{this.id}}</td>
+                    <td>{{formatDate this.created_time}}</td>
+                    <td>{{this.message}}</td>
+                    <td>place holder Attachments</td>
+                    <td> <a class="btn btn-app bg-primary" href='/admin/comment/post?postId={{this.id}}' aria-label="Detail">
+                            Detail
+                        </a></td>
+                    <td>place holder</td>
+                    <td>
+                        <a class="btn btn-app bg-success" href="/admin/post/{{this.id}}">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <form action="/admin/post/{{this.id}}/delete" method="POST">
+                            <button type="button" class="btn btn-app btn-danger" fdprocessedid="h12c9"><i
+                                    class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        <div class="pagination-container">
+            <ul class="pagination">
+                <li class="prev">
+                    <a href='/admin/post?next=&prev={{viewData.previousPage}}' aria-label="Previous">
+                        Previous
+                    </a>
+                </li>
+                <li class="next">
+                    <a href='/admin/post?next={{viewData.nextPage}}&prev=' aria-label="Next">
+                        Next
+                    </a>
+                </li>
+            </ul>
+        </div>
+        {{else}}
+        <p>There are no more posts to display. Go back !!</p>
+        {{/if}}
+    </div>
+</div>
+{{/inline}}
+{{/adminLayoutManagement}}

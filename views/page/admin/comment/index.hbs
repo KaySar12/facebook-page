@@ -1,0 +1,108 @@
+{{#> adminLayoutManagement}}
+{{#*inline "content"}}
+<div class="card mb-4">
+    <div class="card-body">
+
+        <div class="container-fluid">
+            <h5 class="text-center display-4">Search Comment</h5>
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <form action="/admin/comment/post">
+                        <div class="input-group">
+                            <input type="search" name='postId' class="form-control form-control-lg" placeholder="Type Post ID here"
+                                data-listener-added_9711ab0d="true">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-lg btn-default">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        {{viewData.title}}
+    </div>
+    <div class="card-body">
+        {{#if viewData.comments}}
+        <div id="ManagePost" class="dataTables_wrapper dt-bootstrap4">
+            <div class="row">
+                <div class="col-sm-12">
+                    <table class="table table-bordered table-striped dataTable dtr-inline">
+                        <thead>
+                            <tr style="text-align: center">
+                                <th rowspan="1" colspan="1" style="">Comment ID</th>
+                                <th rowspan="1" colspan="1" style="">Created Time</th>
+                                <th rowspan="1" colspan="1" style="">Message</th>
+                                <th rowspan="1" colspan="1" style="">From</th>
+                                <th rowspan="1" colspan="1" style="">Replies</th>
+                                <th rowspan="1" colspan="1" style="">Likes</th>
+                                <th rowspan="1" colspan="1" style="">Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {{#each viewData.comments}}
+                            <tr>
+                                <td>{{this.id}}</td>
+                                <td>{{formatDate this.created_time}}</td>
+                                <td>{{this.message}}</td>
+                                <td>{{this.from.name}}</td>
+                                <td>Replies placeholder</td>
+                                <td>Edit</td>
+                                <td style="text-align: center">
+                                    <form action="/admin/comment/{{this.id}}/delete" method="POST">
+                                        <button type="submit"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                        <tfoot>
+                            <tr style="text-align: center">
+                                <th rowspan="1" colspan="1" style="">Comment ID</th>
+                                <th rowspan="1" colspan="1">Created Time</th>
+                                <th rowspan="1" colspan="1">Message</th>
+                                <th rowspan="1" colspan="1" style="">From</th>
+                                <th rowspan="1" colspan="1" style="">Replies</th>
+                                <th rowspan="1" colspan="1" style="">Likes</th>
+                                <th rowspan="1" colspan="1" style="">Delete</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 col-md-5">
+                    <div class="dataTables_info" id="ManagePost_info" role="status" aria-live="polite">Showing 10 of
+                        totals
+                        entries</div>
+                </div>
+                <div class="col-sm-12 col-md-7">
+                    <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
+                        <ul class="pagination">
+                            <li class="paginate_button page-item previous" id="example1_previous"><a
+                                    href="/admin/comment/post?postId={{viewData.postId}}&next=&prev={{viewData.previousPage}}"
+                                    aria-controls="example1" data-dt-idx="0" tabindex="0"
+                                    class="page-link text-white">Previous</a>
+                            </li>
+                            <li class="paginate_button page-item next" id="example1_next"><a
+                                    href="/admin/comment/post?postId={{viewData.postId}}&next={{viewData.nextPage}}&prev="
+                                    aria-controls="example1" data-dt-idx="7" tabindex="0"
+                                    class="page-link text-white">Next</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {{else}}
+            <p>No comment found</p>
+            {{/if}}
+        </div>
+    </div>
+</div>
+{{/inline}}
+{{/adminLayoutManagement}}

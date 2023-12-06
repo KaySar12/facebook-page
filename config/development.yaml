@@ -1,0 +1,8 @@
+db: 
+  host: 'localhost'
+  username: 'postgres'
+  password: 'Convitcon12'
+  synchronize: true
+
+jwt:
+  secret: 'authenSecret'

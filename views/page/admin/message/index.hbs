@@ -1,0 +1,97 @@
+{{#> adminLayoutManagement}}
+{{#*inline "content"}}
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="container-fluid">
+            <h5 class="text-center display-4">Search Message</h5>
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <form action="#">
+                        <div class="input-group">
+                            <input type="search" class="form-control form-control-lg"
+                                placeholder="Type Conversation ID here" data-listener-added_9711ab0d="true">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-lg btn-default">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        {{viewData.title}}
+    </div>
+    <div class="card-body">
+        {{#if viewData.messages}}
+        <div id="ManagePost" class="dataTables_wrapper dt-bootstrap4">
+            <div class="row">
+                <div class="col-sm-12">
+                    <table class="table table-bordered table-striped dataTable dtr-inline">
+                        <thead>
+                            <tr style="text-align: center">
+                                <th rowspan="1" colspan="1" style="">Message ID</th>
+                                <th rowspan="1" colspan="1" style="">From</th>
+                                <th rowspan="1" colspan="1" style="">To</th>
+                                <th rowspan="1" colspan="1" style="">Message</th>
+                                <th rowspan="1" colspan="1" style="">Send Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{!-- single page data --}}
+                            {{#each viewData.messages}}
+                            <tr>
+                                <td>{{this.id}}</td>
+                                <td>{{this.from.name}}</td>
+                                <td>{{#each this.to.data}} <li>{{this.name}}</li>
+                                    {{/each}}
+                                </td>
+                                <td>{{this.message}}</td>
+                                <td>{{formatDate this.created_time}}</td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                        <tfoot>
+                            <tr style="text-align: center">
+                                <th rowspan="1" colspan="1" style="">Message ID</th>
+                                <th rowspan="1" colspan="1">From</th>
+                                <th rowspan="1" colspan="1">To</th>
+                                <th rowspan="1" colspan="1" style="">Message</th>
+                                <th rowspan="1" colspan="1" style="">Send Date</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 col-md-5">
+                    <div class="dataTables_info" id="ManagePost_info" role="status" aria-live="polite">Showing 10 of
+                        totals
+                        entries</div>
+                </div>
+                <div class="col-sm-12 col-md-7">
+                    <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
+                        <ul class="pagination">
+                            <li class="paginate_button page-item previous" id="example1_previous"><a href="#"
+                                    aria-controls="example1" data-dt-idx="0" tabindex="0"
+                                    class="page-link text-white">Previous</a>
+                            </li>
+                            <li class="paginate_button page-item next" id="example1_next"><a href="#"
+                                    aria-controls="example1" data-dt-idx="7" tabindex="0"
+                                    class="page-link text-white">Next</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {{else}}
+            <p>No Message Found</p>
+            {{/if}}
+        </div>
+    </div>
+</div>
+{{/inline}}
+{{/adminLayoutManagement}}

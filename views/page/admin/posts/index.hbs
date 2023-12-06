@@ -1,0 +1,138 @@
+{{#> adminLayoutManagement}}
+{{#*inline "content"}}
+<div class="card mb-4">
+    <div class="card-header">
+        <b>Create New Post</b>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="/admin/post/create">
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Link</label>
+                    <input name="link" type="text" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Message</label>
+                    <textarea class="form-control" name="message" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputFile">File input</label>
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="exampleInputFile">
+                            <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                        </div>
+                        <div class="input-group-append">
+                            <span class="input-group-text">Upload</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Published</label>
+                    <select name='published' id='publishedSelect' class='form-control'>
+                        <option>True</option>
+                        <option>False</option>
+                    </select>
+                </div>
+            </div>
+            <!-- /.card-body -->
+
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        {{viewData.title}}
+    </div>
+    <div class="card-body">
+        {{#if viewData.posts}}
+        <div id="ManagePost" class="dataTables_wrapper dt-bootstrap4">
+            <div class="row">
+                <div class="col-sm-12">
+                    <table id="ManagePost" class="table table-bordered table-striped dataTable dtr-inline"
+                        aria-describedby="ManagePost_info">
+                        <thead>
+                            <tr style="text-align: center">
+                                <th rowspan="1" colspan="1" style="">Post ID</th>
+                                <th rowspan="1" colspan="1" style="">Created Time</th>
+                                <th rowspan="1" colspan="1" style="">Message(s)</th>
+                                <th rowspan="1" colspan="1" style="">Story(s)</th>
+                                <th rowspan="1" colspan="1" style="">Attachments</th>
+                                <th rowspan="1" colspan="1" style="">Comments</th>
+                                <th rowspan="1" colspan="1" style="">Likes</th>
+                                <th rowspan="1" colspan="1" style="">Edit</th>
+                                <th rowspan="1" colspan="1" style="">Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{!-- single page data --}}
+                            {{#each viewData.posts}}
+                            <tr>
+                                <td>{{this.id}}</td>
+                                <td>{{formatDate this.created_time}}</td>
+                                <td>{{postMessage this.message}}</td>
+                                <td style="text-align: center"><a href="#">{{count this.attachments.data}}
+                                        attachments</a></td>
+                                <td style="text-align: center"> <a href='/admin/comment/post?postId={{this.id}}'
+                                        aria-label="Detail">
+                                        <i class="fas fa-info-circle" style="color: white;"></i>
+                                    </a></td>
+                                <td style="text-align: center">{{ this.likes.summary.total_count}}</td>
+                                <td style="text-align: center">
+                                    <a href="/admin/post/{{this.id}}">
+                                        <i class="fas fa-edit" style="color: white;;"></i>
+                                    </a>
+                                </td>
+                                <td style="text-align: center">
+                                    <form action="/admin/post/{{this.id}}/delete" method="POST">
+                                        <button type="submit"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                        <tfoot>
+                            <tr style="text-align: center">
+                                <th rowspan="1" colspan="1" style="">Post ID</th>
+                                <th rowspan="1" colspan="1">Created Time</th>
+                                <th rowspan="1" colspan="1">Message(s)</th>
+                                <th rowspan="1" colspan="1" style="">Attachments</th>
+                                <th rowspan="1" colspan="1" style="">Comments</th>
+                                <th rowspan="1" colspan="1" style="">Likes</th>
+                                <th rowspan="1" colspan="1" style="">Edit</th>
+                                <th rowspan="1" colspan="1" style="">Delete</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 col-md-5">
+                    <div class="dataTables_info" id="ManagePost_info" role="status" aria-live="polite">Showing 10 of
+                        totals
+                        entries</div>
+                </div>
+                <div class="col-sm-12 col-md-7">
+                    <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
+                        <ul class="pagination">
+                            <li class="paginate_button page-item previous" id="example1_previous"><a
+                                    href="/admin/post?next=&prev={{viewData.previousPage}}" aria-controls="example1"
+                                    data-dt-idx="0" tabindex="0" class="page-link text-white">Previous</a>
+                            </li>
+                            <li class="paginate_button page-item next" id="example1_next"><a
+                                    href="/admin/post?next={{viewData.nextPage}}&prev=" aria-controls="example1"
+                                    data-dt-idx="7" tabindex="0" class="page-link text-white">Next</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {{else}}
+            <p>No Post found !!</p>
+            {{/if}}
+        </div>
+    </div>
+    {{/inline}}
+    {{/adminLayoutManagement}}

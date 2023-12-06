@@ -1,0 +1,35 @@
+.bg-secondary {
+    background-color: #2c3e50 !important;
+}
+
+.copyright {
+    background-color: #1a252f;
+}
+
+.bg-primary {
+    background-color: #1abc9c !important;
+}
+
+nav {
+    font-weight: 700;
+}
+
+.img-card {
+    height: 18vw;
+    object-fit: cover;
+}
+
+.custom-form-group {
+    margin-bottom: 0;
+    /* Adjust margin as needed */
+}
+
+.custom-label {
+    margin-bottom: 0;
+    /* Adjust margin as needed */
+}
+
+.custom-input {
+    margin-bottom: 0 !important;
+    /* Adjust margin as needed */
+}

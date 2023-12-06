@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Panel</title>
+  {{> style}}
+  <meta property="fb:app_id" content="1100983394414551">
+</head>
+
+<body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+  <div id="fb-root"></div>
+  <script async defer crossorigin="anonymous"
+    src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v18.0&appId=1100983394414551"
+    nonce="A9xPN2Ct"></script>
+  <div class="wrapper">
+
+    {{> preloader }}
+    {{> navbar }}
+
+    {{> adminSidebar}}
+
+    <div class="content-wrapper">
+      <section class="content">
+        <div class="container-fluid">
+          {{> content}}
+        </div>
+      </section>
+
+      <aside class="control-sidebar control-sidebar-dark">
+      </aside>
+    </div>
+    {{> footer}}
+  </div>
+  {{> scripts}}
+</body>
+
+</html>
