@@ -3,18 +3,32 @@
 <div class="card mb-4">
     <div class="card-body">
         <div class="container-fluid">
-            <h5 class="text-center display-4">Search Message</h5>
+            <h5 class="text-center display-4">Send Message</h5>
             <div class="row">
                 <div class="col-md-8 offset-md-2">
-                    <form action="#">
-                        <div class="input-group">
-                            <input type="search" class="form-control form-control-lg"
-                                placeholder="Type Conversation ID here" data-listener-added_9711ab0d="true">
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-lg btn-default">
-                                    <i class="fa fa-search"></i>
-                                </button>
+                    <form method="POST" action="/admin/conversations/{{viewData.conversationId}}/sendMessage">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Message</label>
+                                <textarea class="form-control" name="message" rows="3" required></textarea>
                             </div>
+                            <div class="form-group">
+                                <label for="exampleInputFile">File input</label>
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="exampleInputFile">
+                                        <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                    </div>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">Upload</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">Send</button>
                         </div>
                     </form>
                 </div>

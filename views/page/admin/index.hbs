@@ -11,7 +11,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="/admin">Home</a></li>
                         <li class="breadcrumb-item active">Manage Page</li>
                     </ol>
                 </div>
@@ -28,9 +28,9 @@
                     <!-- Profile Image -->
                     <div class="card card-primary card-outline">
                         <div class="card-body box-profile">
-                            <div class="fb-page" data-tabs=""
+                            {{!-- <div class="fb-page" data-tabs=""
                                 data-href="https://www.facebook.com/Testpage1201" data-width="280"
-                                data-hide-cover="false" data-adapt-container-width="true"></div>
+                                data-hide-cover="false" data-adapt-container-width="true"></div> --}}
                         </div>
                         <!-- /.card-body -->
                     </div>
@@ -38,7 +38,6 @@
                     <div class="card card-primary">
                         <div class="card-header">
                             <h3 class="card-title">About This Page</h3>
-                         
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
@@ -83,8 +82,8 @@
                                     {{#each viewData.page.posts.data}}
                                     <div class="post">
                                         <!-- /.user-block -->
-                                        <div class="fb-posts"
-                                            data-href="https://www.facebook.com/Testpage1201/posts/{{this.id}}"></div>
+                                        {{!-- <div class="fb-post"
+                                            data-href="https://www.facebook.com/Testpage1201/posts/{{this.id}}" data-width="500"></div> --}}
                                         <br>
                                         <span class="float-left">
                                             <a href="/admin/comment/post?postId={{this.id}}" class="link-black text-sm">
@@ -102,7 +101,7 @@
                                         </span>
                                         <br>
                                         <form method="POST" action="/admin/comment/{{this.id}}/createComment">
-                                            <div class="input-group input-group-sm mb-0" style="width: 650px;">
+                                            <div class="input-group input-group-sm mb-0" style="width: 500px;">
                                                 <input name='comment' class="form-control form-control-sm" type="text"
                                                     placeholder="Type a comment">
                                                 <div class="input-group-append">

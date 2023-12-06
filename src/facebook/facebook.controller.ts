@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Redirect, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { FacebookService } from './facebook.service';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateNewPostDto } from './dto/createNewPost.dto';
 import { SendMessageDto } from './dto/sendMessage.dto';
@@ -8,7 +7,6 @@ import { AuthGuard } from '@nestjs/passport';
 
 @Controller('facebook')
 @ApiTags('facebook')
-//@UseGuards(JwtAuthGuard)
 export class FacebookController {
     constructor(private readonly facebookService: FacebookService) { }
     @Get("")
@@ -26,14 +24,14 @@ export class FacebookController {
         };
     }
 
-    @Get('/user/accessToken')
-    async getUserLonglivetoken() {
-        return this.facebookService.getUserLongLivesAccessToken();
-    }
-    @Get('/page/accessToken')
-    async getPageAccessToken() {
-        return this.facebookService.getPageAccessToken();
-    }
+    // @Get('/user/accessToken')
+    // async getUserLonglivetoken() {
+    //     return this.facebookService.getUserLongLivesAccessToken();
+    // }
+    // @Get('/page/accessToken')
+    // async getPageAccessToken() {
+    //     return this.facebookService.getPageAccessToken();
+    // }
     @Get('/page/conversations')
     async getPageConversation(): Promise<any> {
         return await this.facebookService.getPageConversations();

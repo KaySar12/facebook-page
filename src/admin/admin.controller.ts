@@ -1,14 +1,14 @@
-import { UseGuards, Controller, Get, Request, Post, Query, Redirect, Render, Req, Res, HttpStatus } from "@nestjs/common";
+import { UseGuards, Controller, Get, Request, Render, Req, Res, HttpStatus } from "@nestjs/common";
 import { AuthGuard, } from "@nestjs/passport";
-import { query } from "express";
+import { UserService } from "src/auth/user.service";
 import { FacebookAuthGuard } from "src/facebook/facebook.guard";
 import { FacebookService } from "src/facebook/facebook.service";
-import { Session } from 'express-session';
-import { LocalAuthGuard } from "src/facebook/local-facebook-auth.guard";
-import { FacebookStrategy } from "src/facebook/facebook.strategy";
+import { LocalAuthGuard } from "src/facebook/local-auth.guard";
 @Controller('/admin')
 export class AdminController {
-    constructor(private readonly facebookService: FacebookService) {
+    constructor(
+        private readonly userService: UserService,
+        private readonly facebookService: FacebookService) {
     }
 
     @Get('/login')
@@ -20,7 +20,6 @@ export class AdminController {
             viewData: viewData,
         };
     }
-    //Get / logout
     @Get('/logout')
     logout(@Request() req, @Res() res: any): any {
         req.session.destroy();
@@ -37,15 +36,27 @@ export class AdminController {
     async facebookLoginRedirect(@Req() req: any, @Res() res: any): Promise<any> {
         return res.redirect('/admin')
     }
-
     @Get('/')
     @UseGuards(FacebookAuthGuard)
     @Render('page/admin/index')
     async index(@Req() req: any, @Res() res) {
-        if (!req.user) {
-            return res.redirect('/admin/login');
-          }
-        
+        if (req.user) {
+            const userData = req.user;
+            console.log(userData);
+            const checkExist = await this.userService.checkExist(userData.user.email);
+            if (!checkExist) {
+                const extendToken = await this.facebookService.getUserLongLivesAccessToken(userData.accessToken);
+                const pageAccessToken = await this.facebookService.getPageAccessToken(extendToken);
+                console.log(extendToken);
+                const createUser = {
+                    email: userData.user.email,
+                    firstName: userData.user.firstName,
+                    lastName: userData.user.lastName,
+                    accessToken: pageAccessToken,
+                }
+                await this.userService.create(createUser)
+            }
+        }
         const pageDetail = await this.facebookService.getPageDetail();
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin - Manage Home Page';
@@ -68,7 +79,6 @@ export class AdminController {
             viewData: viewData,
         };
     }
-
     @Get('/protected')
     @UseGuards(FacebookAuthGuard)
     getHello(@Request() req): string {

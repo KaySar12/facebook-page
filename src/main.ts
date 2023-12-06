@@ -34,6 +34,8 @@ async function bootstrap() {
       secret: 'my-secret',
       resave: false,
       saveUninitialized: false,
+      name: 'acc-facebook-session',
+      cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
     }),)
   app.use(passport.initialize())
   app.use(passport.session())

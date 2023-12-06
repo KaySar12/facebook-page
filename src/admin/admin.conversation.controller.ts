@@ -27,9 +27,11 @@ export class AdminConversationController {
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin - Manage Messages in a Conversation';
         viewData['messages'] = messages;
+        viewData['conversationId']=conversationId;
         return {
             viewData: viewData
         }
     }
-    
+    @Post()
+
 }
