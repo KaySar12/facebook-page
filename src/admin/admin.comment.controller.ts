@@ -50,10 +50,10 @@ export class AdminCommentController {
             return await this.facebookService.getPrevCommentbyId(id, prev);
         }
     }
-    @Post('/:postId/delete')
-    @Redirect('/admin/comment/post')
-    async remove(@Param('postId') postId: string) {
-        return await this.facebookService.deletePost(postId);
+    @Get('/:commentId/delete')
+    async remove(@Param('commentId') commentId: string, @Query() query: any, @Res() res: any) {
+        await this.facebookService.deleteComment(commentId);
+        return res.redirect(`/admin/comment/getComment?id=${query.postId}`)
     }
     @Post('/:postId/createComment')
     @UseInterceptors(FileInterceptor('fileUpload'))
@@ -77,6 +77,6 @@ export class AdminCommentController {
         }
         console.log('post without file')
         await this.facebookService.postComment(postId, comment);
-         return res.redirect(`/admin/comment/getComment?id=${postId}`);
+        return res.redirect(`/admin/comment/getComment?id=${postId}`);
     }
 }
