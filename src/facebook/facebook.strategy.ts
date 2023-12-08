@@ -8,7 +8,7 @@ export class FacebookStrategy extends PassportStrategy(Strategy) {
         super({
             clientID: 1100983394414551,
             clientSecret: '6d4c80736b6935e9ae26c5a50a484ba0',
-            callbackURL: 'https://9839-113-190-44-196.ngrok-free.app/admin/action/redirect',
+            callbackURL: 'https://violently-distinct-trout.ngrok-free.app/admin/action/redirect',
             scope: 'email',
             profileFields: ['emails', 'name'],
         });

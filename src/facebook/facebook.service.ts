@@ -7,14 +7,58 @@ import { CreateNewPostDto } from './dto/createNewPost.dto';
 import { SendMessageDto } from './dto/sendMessage.dto';
 @Injectable()
 export class FacebookService {
-    private userAccessToken: string
     private pageAccessToken: string
     constructor(private configService: ConfigService) {
-        //Using static value for testing only
-        this.userAccessToken = 'EAAPpVqwgr9cBO1KIn0WLXphpIm4okW0bR8C27sa22HeIGqsu55fKAnu4ooX1gSDMD62ZB1SwtDhUq0bgn6EBlz1JUW5fUvijs2YZC5t26vn7jTlja8f4fGHjDGO6WVGOwxGTQVbHn3LZCU4IP0ZAo8HZC0hdpUlqdDR2RXpKdIWnbqE1O8WeU427w'
-        this.pageAccessToken = 'EAAPpVqwgr9cBO5LlZCTmcpQhH3qootQohfpykrMktlIVrZAAxeeiTfzQg7yBF6yBmjjw9QbZCRMGJx1gPTwFL1TEZCqHD1EHoxh3lWLZCwYjUPXKMqyzw8mngvMWOhobGhFLpnh5txvDqCC15LqaZC8eaxZCPZBSmu1HSnkOIQjC6qnK8Q5GbCLVr3mTWLjZCZBtYZD'
+        //Owner access token
+        //default invalid page token
+        this.pageAccessToken = 'EAAPpVqwgr9cBO6P6VJ67HMaVEzk5LwwaVYZBuLiyFAwqEZAFsSYbmFbCLrajtjctvkXFMPqjwJGrPOZBzSeM8ZCzB0MBDRCnkbZAL1aN2Af8eRQRNPgKgihC39hXd6ZBKe1W4aeqgabVJiJr1HK0BN19nzfdCidVZCZBMzN7HLQKjXYJxdhZCWqZAFn0vEm6heWkAZD';
     }
-
+    async checkTokenData(tokenToCheck: string, accessToken: string) {
+        const options = {
+            method: "GET",
+            url: `https://graph.facebook.com/debug_token?input_token=${tokenToCheck}&access_token=${accessToken}`,
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+            },
+        }
+        try {
+            const response = await axios.request(options);
+            // console.log(response.data);
+            const tokenData = response.data;
+            console.log(tokenData.data.profile_id);
+            if (!tokenData.data.is_valid || tokenData.data.profile_id != '179668665228573') {
+                console.log('invalid token detected')
+                return false;
+            }
+            return true;
+        } catch (error) {
+            console.error('error at checkTokenData method');
+            return false;
+        }
+    }
+    setCurrentPageAccessToken(newAccessToken: string) {
+        this.pageAccessToken = newAccessToken;
+    }
+    getCurrentPageAccessToken() {
+        return this.pageAccessToken
+    }
+    async getUserId(accessToken: string) {
+        const options = {
+            method: "GET",
+            url: `https://graph.facebook.com/v18.0/me`,
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Authorization': `Bearer ${accessToken} `
+            },
+        }
+        try {
+            const response = await axios.request(options);
+            return response.data.id;
+        } catch (error) {
+            console.log(error);
+            console.error('error at getUserId method');
+        }
+    }
     async getUserLongLivesAccessToken(accessToken: string) {
         const options = {
             method: "GET",
@@ -37,7 +81,7 @@ export class FacebookService {
             url: `https://graph.facebook.com/me/accounts`,
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
-                'Authorization': `Bearer ${this.userAccessToken} `
+                'Authorization': `Bearer ${userAccessToken} `
             },
         }
         try {
@@ -49,7 +93,7 @@ export class FacebookService {
         }
     }
     async getPageDetail() {
-        const accessToken = this.pageAccessToken;
+        const accessToken = this.getCurrentPageAccessToken();
         const fields = 'link,followers_count,fan_count,name,phone,albums{photos{id,link,picture}},about,picture{url,height,width,cache_key,is_silhouette},release_date,location,current_location,general_info,personal_info,engagement,featured_video,emails,posts.limit(10){from,full_picture,icon,id,created_time,likes{id},comments{id},status_type,permalink_url,message}'
         const options = {
             method: 'GET',
@@ -64,7 +108,8 @@ export class FacebookService {
             // console.log(response.data);
             return response.data;
         } catch (error) {
-            console.error(error);
+            console.log(error);
+            console.error('error at getPageDetail method');
         }
     }
     async getPageConversations(): Promise<any> {
@@ -119,7 +164,7 @@ export class FacebookService {
             //console.log(response.data);
             return response.data;
         } catch (error) {
-            console.error(error);
+            console.error('error at getPagePost method');
         }
     }
     async getNextPagePost(next: string) {
@@ -185,6 +230,30 @@ export class FacebookService {
             console.error(error.response.data);
         }
     }
+    async createNewPostWithFile(params: CreateNewPostDto, imageId: string): Promise<any> {
+        const access_token = this.pageAccessToken;
+        console.log(params);
+        const options = {
+            method: 'POST',
+            url: `https://graph.facebook.com/v18.0/179668665228573/feed`,
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': `Bearer ${access_token}`,
+            },
+            data: {
+                message: params.message.toString(),
+                published: params.published.toString().toLowerCase() === 'true', // Convert to boolean
+                object_attachment: imageId
+            },
+        };
+        try {
+            const response = await axios.request(options);
+            console.log(response.data);
+            return response.data;
+        } catch (error) {
+            console.error(error.response.data);
+        }
+    }
     async sendMessageToUser(params: SendMessageDto) {
         const access_token = this.pageAccessToken;
         const options = {
@@ -229,6 +298,28 @@ export class FacebookService {
             console.error(error.response.data);
         }
     }
+    async postCommentWithFile(postId: string, message: string, url: string) {
+        const access_token = this.pageAccessToken;
+        const options = {
+            method: 'POST',
+            url: `https://graph.facebook.com/v18.0/${postId}/comments`,
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': `Bearer ${access_token}`,
+            },
+            data: {
+                message: message,
+                attachment_url: url,
+            },
+        };
+        try {
+            const response = await axios.request(options);
+            console.log(response.data);
+            return response.data;
+        } catch (error) {
+            console.error(error.response.data);
+        }
+    }
     async getPostbyId(postId: string) {
         const access_token = this.pageAccessToken;
         const options = {
@@ -247,12 +338,13 @@ export class FacebookService {
             console.error(error.response.data);
         }
     }
-    async getCommentbyPostId(postId: string) {
+    async getCommentbyId(id: string) {
         const access_token = this.pageAccessToken;
-        console.log(postId);
+        console.log(id);
+        const fields = 'created_time,from,id,likes.limit(1).summary(true),message';
         const options = {
             method: 'GET',
-            url: `https://graph.facebook.com/v18.0/${postId}/comments?limit=10`,
+            url: `https://graph.facebook.com/v18.0/${id}/comments?fields=${fields}&limit=10`,
             headers: {
                 'content-type': 'application/json',
                 'Authorization': `Bearer ${access_token}`,
@@ -266,12 +358,13 @@ export class FacebookService {
             console.error(error.response.data);
         }
     }
-    async getNextCommentbyPostId(postId: string, next: string) {
+    async getNextCommentbyId(id: string, next: string) {
         const access_token = this.pageAccessToken;
-        console.log(postId);
+        console.log(id);
+        const fields = 'created_time,from,id,likes.limit(1).summary(true),message';
         const options = {
             method: 'GET',
-            url: `https://graph.facebook.com/v18.0/${postId}/comments?limit=10&after=${next}`,
+            url: `https://graph.facebook.com/v18.0/${id}/comments?fields=${fields}&limit=10&after=${next}`,
             headers: {
                 'content-type': 'application/json',
                 'Authorization': `Bearer ${access_token}`,
@@ -285,12 +378,13 @@ export class FacebookService {
             console.error(error.response.data);
         }
     }
-    async getPrevCommentbyPostId(postId: string, prev: string) {
+    async getPrevCommentbyId(id: string, prev: string) {
         const access_token = this.pageAccessToken;
-        console.log(postId);
+        //console.log(id);
+        const fields = 'created_time,from,id,likes.limit(1).summary(true),message';
         const options = {
             method: 'GET',
-            url: `https://graph.facebook.com/v18.0/${postId}/comments?limit=10&previous=${prev}`,
+            url: `https://graph.facebook.com/v18.0/${id}/comments?fields=${fields}&limit=10&previous=${prev}`,
             headers: {
                 'content-type': 'application/json',
                 'Authorization': `Bearer ${access_token}`,
@@ -418,4 +512,46 @@ export class FacebookService {
             console.error(error.response.data);
         }
     }
+    async uploadPhotoNoStory(url: string) {
+        console.log(url);
+        const options = {
+            method: 'Post',
+            url: `https://graph.facebook.com/179668665228573/photos?no_story=true`,
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': `Bearer ${this.pageAccessToken}`,
+            },
+            data: {
+                url: url
+            },
+        }
+        try {
+            const response = await axios.request(options);
+            console.log(response.data);
+            return response.data;
+        } catch (error) {
+            console.error(error.response.data);
+        }
+    }
+    async uploadPhoto(url: string) {
+        const options = {
+            method: 'Post',
+            url: `https://graph.facebook.com/179668665228573/photos?`,
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': `Bearer ${this.pageAccessToken}`,
+            },
+            data: {
+                url: url
+            },
+        }
+        try {
+            const response = await axios.request(options);
+            console.log(response.data);
+            return response.data;
+        } catch (error) {
+            console.error(error.response.data);
+        }
+    }
+
 }

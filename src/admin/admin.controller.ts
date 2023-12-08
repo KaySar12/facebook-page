@@ -40,31 +40,53 @@ export class AdminController {
     @UseGuards(FacebookAuthGuard)
     @Render('page/admin/index')
     async index(@Req() req: any, @Res() res) {
-        if (req.user) {
-            const userData = req.user;
-            console.log(userData);
-            const checkExist = await this.userService.checkExist(userData.user.email);
-            if (!checkExist) {
-                const extendToken = await this.facebookService.getUserLongLivesAccessToken(userData.accessToken);
-                const pageAccessToken = await this.facebookService.getPageAccessToken(extendToken);
-                console.log(extendToken);
-                const createUser = {
-                    email: userData.user.email,
-                    firstName: userData.user.firstName,
-                    lastName: userData.user.lastName,
-                    accessToken: pageAccessToken,
-                }
-                await this.userService.create(createUser)
-            }
-        }
-        const pageDetail = await this.facebookService.getPageDetail();
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin - Manage Home Page';
-        viewData['page'] = pageDetail;
+        if (req.user) {
+            const userData = req.user;
+            const checkExist = await this.userService.checkExist(userData.user.email);
+            const userId = await this.facebookService.getUserId(userData.accessToken);
+            console.log(userData.accessToken);
+            if (userId === '1425721644676951') {
+                const currentPageAccessToken = this.facebookService.getCurrentPageAccessToken()
+                console.log(currentPageAccessToken);
+                const checkToken = await this.facebookService.checkTokenData(currentPageAccessToken, userData.accessToken);
+                if (!currentPageAccessToken || !checkToken) {
+                    await this.renewPageAccessToken(req.user.accessToken);
+                }
+            }
+            if (!checkExist) {
+                console.log(`User ID:${userId}`);
+                const createUser = {
+                    userId: userId,
+                    email: userData.user.email,
+                    firstName: userData.user?.firstName || '',
+                    lastName: userData.user?.lastName || '',
+                }
+                viewData['userName'] = `${createUser.firstName} ${createUser.lastName}`;
+                await this.userService.create(createUser)
+            }
+            const pageDetail = await this.facebookService.getPageDetail();
+            viewData['page'] = pageDetail;
+            viewData['userName'] = `${checkExist.firstName} ${checkExist.lastName}`;
+        }
         return {
             viewData: viewData,
         };
     }
+    async renewPageAccessToken(ownerAccesToken: string) {
+        const longLiveToken = await this.facebookService.getUserLongLivesAccessToken(ownerAccesToken);
+        const pageAccessToken = await this.facebookService.getPageAccessToken(longLiveToken);
+        this.facebookService.setCurrentPageAccessToken(pageAccessToken);
+        console.log('renew Page Token');
+    }
+    @Get('/postData')
+    @UseGuards(FacebookAuthGuard)
+    async getpostData() {
+        const pageDetail = await this.facebookService.getPageDetail();
+        return pageDetail.posts.data
+    }
+
     @Get("/about")
     @UseGuards(FacebookAuthGuard)
     @Render('page/admin/about/index')
@@ -81,7 +103,7 @@ export class AdminController {
     }
     @Get('/protected')
     @UseGuards(FacebookAuthGuard)
-    getHello(@Request() req): string {
+    getHello(@Request() req: any): string {
         return req.user;
     }
 

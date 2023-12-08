@@ -7,11 +7,12 @@ import { FacebookStrategy } from "src/facebook/facebook.strategy";
 import { FacebookAuthGuard } from "src/facebook/facebook.guard";
 import { PassportModule } from "@nestjs/passport";
 import { UserModule } from "src/auth/user.module";
+import { CloudinaryModule } from "src/cloudinary/cloudinary.module";
 
 
 
 @Module({
-    imports: [PassportModule.register({ session: true }),UserModule],
+    imports: [PassportModule.register({ session: true }), UserModule, CloudinaryModule],
     controllers: [AdminController, AdminPostController, AdminCommentController, AdminConversationController,],
     providers: [FacebookStrategy, FacebookAuthGuard],
 })

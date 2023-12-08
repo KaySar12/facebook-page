@@ -13,12 +13,16 @@ export class UserService {
     const user = this.userRepository.create(jsonData);
     return await this.userRepository.save(user);
   }
-  async checkExist(email: string): Promise<boolean> {
+  async checkExist(email: string): Promise<any> {
     const checkExist = await this.userRepository.findOne({ where: { email: email } });
     if (checkExist) {
-      return true;
+      return checkExist;
     }
-    return false;
+    return undefined;
+  }
+
+  async findOwnerById() {
+    return await this.userRepository.findOne({ where: { userId: '1425721644676951' } });
   }
   // findOne(username: string) {
   //   if (!username) {

@@ -11,6 +11,8 @@ import { AdminModule } from './admin/admin.module';
 import { FacebookService } from './facebook/facebook.service';
 import { PassportModule } from '@nestjs/passport';
 import { UserModule } from './auth/user.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { CloudinaryService } from './cloudinary/cloudinary.service';
 @Global()
 @Module({
   imports: [PassportModule.register({ session: true }),
@@ -20,9 +22,9 @@ import { UserModule } from './auth/user.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV}`,
-    }), AdminModule,UserModule],
+    }), AdminModule,UserModule, CloudinaryModule],
   controllers: [AppController],
-  providers: [AppService, FacebookService],
+  providers: [AppService, FacebookService, CloudinaryService],
   exports: [FacebookService],
 })
 export class AppModule { }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Redirect, Req, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { FacebookService } from './facebook.service';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateNewPostDto } from './dto/createNewPost.dto';
@@ -72,6 +72,6 @@ export class FacebookController {
     }
     @Get('/page/:postId/comments')
     async getCommentbyPostId(@Param('postId') postId: string) {
-        return await this.facebookService.getCommentbyPostId(postId);
+        return await this.facebookService.getCommentbyId(postId);
     }
 }

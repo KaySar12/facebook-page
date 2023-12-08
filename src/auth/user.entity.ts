@@ -15,10 +15,10 @@ import { v4 as uuid } from 'uuid';
 
 @Entity()
 export class User extends BaseEntity {
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
+  @Column('text')
+  userId: string;
   @Column('text')
   email: string;
 
@@ -26,10 +26,6 @@ export class User extends BaseEntity {
   firstName: string;
   @Column('text')
   lastName: string;
-
-  @Column('text')
-  accessToken: string;
-
   @CreateDateColumn()
   createdDate: Date;
   @BeforeInsert()

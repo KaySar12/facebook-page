@@ -5,11 +5,11 @@
         <b>Create New Post</b>
     </div>
     <div class="card-body">
-        <form method="POST" action="/admin/post/create">
+        <form method="POST" action="/admin/post/create" enctype="multipart/form-data">
             <div class="card-body">
                 <div class="form-group">
                     <label for="exampleInputEmail1">Link</label>
-                    <input name="link" type="text" class="form-control" required>
+                    <input name="link" type="text" class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="exampleInputPassword1">Message</label>
@@ -19,13 +19,13 @@
                     <label for="exampleInputFile">File input</label>
                     <div class="input-group">
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="exampleInputFile">
-                            <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                        </div>
-                        <div class="input-group-append">
-                            <span class="input-group-text">Upload</span>
+                            <input id="inputFile1" class="custom-file-input" type="file" name="fileUpload">
+                            <label id="file1" class="custom-file-label" for="exampleInputFile">Choose file</label>
                         </div>
                     </div>
+                </div>
+                <div class="form-group">
+                    <img id="filePreview" src="" alt="File Preview" style="display: none; width: 100px; height: 100px;">
                 </div>
                 <div class="form-group">
                     <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Published</label>
@@ -59,10 +59,11 @@
                                 <th rowspan="1" colspan="1" style="">Post ID</th>
                                 <th rowspan="1" colspan="1" style="">Created Time</th>
                                 <th rowspan="1" colspan="1" style="">Message(s)</th>
-                                <th rowspan="1" colspan="1" style="">Story(s)</th>
                                 <th rowspan="1" colspan="1" style="">Attachments</th>
                                 <th rowspan="1" colspan="1" style="">Comments</th>
-                                <th rowspan="1" colspan="1" style="">Likes</th>
+                                <th rowspan="1" colspan="1" style="">Likes Count</th>
+                                <th rowspan="1" colspan="1" style="">Like Post</th>
+                                <th rowspan="1" colspan="1" style="">Unlike Post</th>
                                 <th rowspan="1" colspan="1" style="">Edit</th>
                                 <th rowspan="1" colspan="1" style="">Delete</th>
                             </tr>
@@ -76,14 +77,20 @@
                                 <td>{{postMessage this.message}}</td>
                                 <td style="text-align: center"><a href="#">{{count this.attachments.data}}
                                         attachments</a></td>
-                                <td style="text-align: center"> <a href='/admin/comment/post?postId={{this.id}}'
+                                <td style="text-align: center"> <a href='/admin/comment/getComment?id={{this.id}}'
                                         aria-label="Detail">
                                         <i class="fas fa-info-circle" style="color: white;"></i>
                                     </a></td>
                                 <td style="text-align: center">{{ this.likes.summary.total_count}}</td>
+                                <td> <a href="/admin/post/{{this.id}}/like" class="link-black text-sm"><i
+                                            class="far fa-thumbs-up mr-1"></i>
+                                        Like</a></td>
+                                <td> <a href="/admin/post/{{this.id}}/unlike" class="link-black text-sm"><i
+                                            class="far fa-thumbs-down mr-1"></i>
+                                        UnLike</a></td>
                                 <td style="text-align: center">
                                     <a href="/admin/post/{{this.id}}">
-                                        <i class="fas fa-edit" style="color: white;;"></i>
+                                        <i class="fas fa-edit" style="color: white;"></i>
                                     </a>
                                 </td>
                                 <td style="text-align: center">
@@ -101,7 +108,9 @@
                                 <th rowspan="1" colspan="1">Message(s)</th>
                                 <th rowspan="1" colspan="1" style="">Attachments</th>
                                 <th rowspan="1" colspan="1" style="">Comments</th>
-                                <th rowspan="1" colspan="1" style="">Likes</th>
+                                <th rowspan="1" colspan="1" style="">Likes Count</th>
+                                <th rowspan="1" colspan="1" style="">Like Post</th>
+                                <th rowspan="1" colspan="1" style="">Unlike Post</th>
                                 <th rowspan="1" colspan="1" style="">Edit</th>
                                 <th rowspan="1" colspan="1" style="">Delete</th>
                             </tr>
@@ -134,5 +143,20 @@
             {{/if}}
         </div>
     </div>
+    <script>
+        document.getElementById('inputFile1').addEventListener('change', function () {
+            var fileName = this.files[0].name;
+            document.getElementById('file1').textContent = fileName;
+
+            if (this.files[0].type.match(/image.*/)) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('filePreview').src = e.target.result;
+                    document.getElementById('filePreview').style.display = 'block';
+                }
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    </script>
     {{/inline}}
     {{/adminLayoutManagement}}

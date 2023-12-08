@@ -1,20 +1,25 @@
-import { Body, Controller, Get, Param, Post, Query, Redirect, Render, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Query, Redirect, Render, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CreateNewPostDto } from 'src/facebook/dto/createNewPost.dto';
 import { FacebookService } from 'src/facebook/facebook.service';
 import { PageDto } from './dto/page.dto';
 import { access } from 'fs';
 import { FacebookAuthGuard } from 'src/facebook/facebook.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { response } from 'express';
+
 @Controller('/admin/post')
 @UseGuards(FacebookAuthGuard)
 export class AdminPostController {
-    constructor(private readonly facebookService: FacebookService) { }
+    constructor(
+        private cloudinaryService: CloudinaryService,
+        private readonly facebookService: FacebookService) { }
     @Get('/')
     @Render('page/admin/posts/index')
-    async index(@Query() query: PageDto,@Req() req: any) {
-        console.log(req.session['accessKey']); // Logging the body of the request
+    async index(@Query() query: PageDto, @Req() req: any) {
         // Logging the value of prev
         const response = await this.getPost(query.next, query.prev);
-       
+
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin -  Manage Post page';
         viewData['posts'] = response.data;
@@ -39,9 +44,32 @@ export class AdminPostController {
     }
     @Post('/create')
     @Redirect('/admin/post')
-    async store(@Body() body: CreateNewPostDto) {
-        console.log(body);
+    @UseInterceptors(FileInterceptor('fileUpload'))
+    async createNewPost(@Body() body: CreateNewPostDto, @UploadedFile() file: Express.Multer.File) {
+        if (file) {
+            const secureUrl = await this.cloudinaryService
+                .uploadImage(file)
+                .then((data) => {
+                    return data.secure_url;
+                })
+                .catch((err) => {
+                    return {
+                        statusCode: 400,
+                        message: err.message,
+                    };
+                });
+            const response = await this.facebookService.uploadPhotoNoStory(secureUrl);
+            return await this.facebookService.createNewPostWithFile(body, response.id);
+        }
         return await this.facebookService.createNewPost(body);
+    }
+    async uploadImageToCloudinary(file: Express.Multer.File) {
+        try {
+            return await this.cloudinaryService.uploadImage(file)
+        } catch (error) {
+            console.log(error);
+            throw new BadRequestException('Invalid file type.');
+        }
     }
     @Post('/:postId/delete')
     @Redirect('/admin/post')
@@ -85,13 +113,13 @@ export class AdminPostController {
         return await this.facebookService.updatePost(postId, body);
     }
     @Get('/:postId/like')
-    @Redirect('/admin/')
+    @Redirect('/admin/post')
     async likePost(@Param('postId') postId: string) {
         console.log(`liked post ${postId}`)
         return await this.facebookService.LikePostAction(postId);
     }
     @Get('/:postId/unlike')
-    @Redirect('/admin/')
+    @Redirect('/admin/post')
     async UnlikePost(@Param('postId') postId: string) {
         console.log(`unliked post ${postId}`)
         return await this.facebookService.DeleteLike(postId);

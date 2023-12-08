@@ -1,21 +1,32 @@
 {{#> adminLayoutManagement}}
 {{#*inline "content"}}
-<div class="card mb-4">
+<div class="card mb-4" id="postCommentDiv">
     <div class="card-body">
-
         <div class="container-fluid">
-            <h5 class="text-center display-4">Search Comment</h5>
+            <h5 class="text-center display-4">Post Comment</h5>
             <div class="row">
                 <div class="col-md-8 offset-md-2">
-                    <form action="/admin/comment/post">
-                        <div class="input-group">
-                            <input type="search" name='postId' class="form-control form-control-lg" placeholder="Type Post ID here"
-                                data-listener-added_9711ab0d="true">
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-lg btn-default">
-                                    <i class="fa fa-search"></i>
-                                </button>
+                    <form method="POST" action="/admin/comment/{{viewData.postId}}/createComment" enctype="multipart/form-data">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Message</label>
+                                <textarea class="form-control" name="message" rows="3" required></textarea>
                             </div>
+                            <div class="form-group">
+                                <label for="exampleInputFile">File input</label>
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input id="inputFile1" class="custom-file-input" type="file" name="fileUpload">
+                                        <label id="file1" class="custom-file-label" for="exampleInputFile">Choose
+                                            file</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">Post</button>
                         </div>
                     </form>
                 </div>
@@ -52,8 +63,11 @@
                                 <td>{{formatDate this.created_time}}</td>
                                 <td>{{this.message}}</td>
                                 <td>{{this.from.name}}</td>
-                                <td>Replies placeholder</td>
-                                <td>Edit</td>
+                                <td style="text-align: center"><a href='/admin/comment/getComment?id={{this.id}}'
+                                        aria-label="Detail">
+                                        <i class="fas fa-info-circle" style="color: white;"></i>
+                                    </a></td>
+                                <td style="text-align: center">{{this.likes.summary.total_count}}</td>
                                 <td style="text-align: center">
                                     <form action="/admin/comment/{{this.id}}/delete" method="POST">
                                         <button type="submit"><i class="fas fa-trash"></i></button>
@@ -86,12 +100,12 @@
                     <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
                         <ul class="pagination">
                             <li class="paginate_button page-item previous" id="example1_previous"><a
-                                    href="/admin/comment/post?postId={{viewData.postId}}&next=&prev={{viewData.previousPage}}"
+                                    href="/admin/comment/getComment?id={{viewData.postId}}&next=&prev={{viewData.previousPage}}"
                                     aria-controls="example1" data-dt-idx="0" tabindex="0"
                                     class="page-link text-white">Previous</a>
                             </li>
                             <li class="paginate_button page-item next" id="example1_next"><a
-                                    href="/admin/comment/post?postId={{viewData.postId}}&next={{viewData.nextPage}}&prev="
+                                    href="/admin/comment/getComment?id={{viewData.postId}}&next={{viewData.nextPage}}&prev="
                                     aria-controls="example1" data-dt-idx="7" tabindex="0"
                                     class="page-link text-white">Next</a></li>
                         </ul>
@@ -104,5 +118,25 @@
         </div>
     </div>
 </div>
+<script>
+    if (viewData.postId === '') {
+        document.getElementById('postCommentDiv').style.display = 'none';
+    }
+</script>
+<script>
+    document.getElementById('inputFile1').addEventListener('change', function () {
+        var fileName = this.files[0].name;
+        document.getElementById('file1').textContent = fileName;
+
+        if (this.files[0].type.match(/image.*/)) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('filePreview').src = e.target.result;
+                document.getElementById('filePreview').style.display = 'block';
+            }
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+</script>
 {{/inline}}
 {{/adminLayoutManagement}}

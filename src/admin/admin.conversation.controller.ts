@@ -32,6 +32,5 @@ export class AdminConversationController {
             viewData: viewData
         }
     }
-    @Post()
 
 }
