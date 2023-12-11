@@ -264,12 +264,13 @@ export class FacebookService {
                 'Authorization': `Bearer ${access_token}`,
             },
             data: {
-                recipient: params.recipient,
+                recipient: { 'id': params.recipient },
                 messaging_type: params.messaging_type,
-                message: params.message,
+                message: { 'text': params.message },
             },
         }
         try {
+            //console.log(options.data);
             const response = await axios.request(options);
             //  console.log(response.data);
             return response.data;

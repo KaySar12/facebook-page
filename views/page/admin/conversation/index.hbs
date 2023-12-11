@@ -1,136 +1,138 @@
 {{#> adminLayoutManagement}}
 {{#*inline "content"}}
-{{!-- <div class="card mb-4">
-    <div class="card-body">
-        <div class="container-fluid">
-            <h5 class="text-center display-4">Search Conversation</h5>
-            <div class="row">
-                <div class="col-md-8 offset-md-2">
-                    <form action="#">
-                        <div class="input-group">
-                            <input type="search" class="form-control form-control-lg"
-                                placeholder="Type Conversation ID here" data-listener-added_9711ab0d="true" required>
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-lg btn-default">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+<!-- DIRECT CHAT -->
+<div class="card direct-chat direct-chat-warning">
+  <div class="card-header">
+    <h3 class="card-title">Message</h3>
+
+    <div class="card-tools">
+      <button type="button" class="btn btn-tool" data-card-widget="collapse">
+        <i class="fas fa-minus"></i>
+      </button>
+      <button type="button" class="btn btn-tool" title="Contacts" data-widget="chat-pane-toggle">
+        <i class="fas fa-comments"></i>
+      </button>
+      <button type="button" class="btn btn-tool" data-card-widget="remove">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+  <!-- /.card-header -->
+  <br class="card-body">
+  <!-- Conversations are loaded here -->
+  {{#if viewData.conversationId }}
+  <div class="direct-chat-messages">
+    {{#each viewData.messages}}
+    <!-- Message. Default to the left -->
+    {{#when this.from.name 'eq' ../viewData.senders.0.name}}
+    <div class="direct-chat-msg">
+      <div class="direct-chat-infos clearfix">
+        <span class="direct-chat-name float-left">{{this.from.name}}</span>
+        <span class="direct-chat-timestamp float-right">23 Jan 2:00 pm</span>
+      </div>
+      <!-- /.direct-chat-infos -->
+      <img class="direct-chat-img"
+        src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+        alt="message user image">
+      <!-- /.direct-chat-img -->
+      <div class="direct-chat-text">
+        {{this.message}}
+      </div>
+      <!-- /.direct-chat-text -->
+    </div>
+    {{/when}}
+    {{#when this.from.name 'eq' ../viewData.senders.1.name}}
+    <div class="direct-chat-msg right">
+      <div class="direct-chat-infos clearfix">
+        <span class="direct-chat-name float-right">{{this.from.name}}</span>
+        <span class="direct-chat-timestamp float-left">23 Jan 2:05 pm</span>
+      </div>
+      <!-- /.direct-chat-infos -->
+      <img class="direct-chat-img"
+        src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+        alt="message user image">
+      <!-- /.direct-chat-img -->
+      <div class="direct-chat-text">
+        {{this.message}}
+      </div>
+      <!-- /.direct-chat-text -->
+    </div>
+    {{/when}}
+    {{/each}}
+  </div>
+  {{else}}
+
+  <ul class="contacts-list">
+    {{#each viewData.conversations}}
+    <li>
+      <a href="/admin/conversations/message?conversationId={{this.id}}">
+        <img class="contacts-list-img"
+          src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="User Avatar">
+        <div class="contacts-list-info">
+          <span class="contacts-list-name">
+            {{this.senders.data.0.name}}
+            <small class="contacts-list-date float-right">{{formatDate this.updated_time}}</small>
+          </span>
+          <span class="contacts-list-msg">
+            {{this.messages.data.0.message}}
+          </span>
         </div>
+      </a>
+    </li>
+    {{/each}}
+    <!-- End Contact Item -->
+    <!-- End Contact Item -->
+  </ul>
+  <!-- /.contacts-list -->
+  {{/if}}
+  <!--/.direct-chat-messages-->
+
+  <!-- Contacts are loaded here -->
+  <div class="direct-chat-contacts">
+    <ul class="contacts-list">
+      {{#each viewData.conversations}}
+      <li>
+        <a href="/admin/conversations/message?conversationId={{this.id}}">
+          <img class="contacts-list-img"
+            src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+            alt="User Avatar">
+          <div class="contacts-list-info">
+            <span class="contacts-list-name">
+              {{this.senders.data.0.name}}
+              <small class="contacts-list-date float-right">{{formatDate this.updated_time}}</small>
+            </span>
+            <span class="contacts-list-msg">
+              {{this.messages.data.0.message}}
+            </span>
+          </div>
+        </a>
+      </li>
+      {{/each}}
+      <!-- End Contact Item -->
+      <!-- End Contact Item -->
+    </ul>
+    <!-- /.contacts-list -->
+  </div>
+
+  <!-- /.direct-chat-pane -->
+</div>
+{{#if viewData.conversationId }}
+<!-- /.card-body -->
+<div class="card-footer">
+  <form action="/admin/conversations/send/{{viewData.senders.0.id}}" method="POST">
+    <div class="input-group">
+      <input type="text" name="message" placeholder="Type Message ..." class="form-control">
+      <span class="input-group-append">
+        <input type="hidden" id="currentConversation" name="currentConversation" value={{viewData.conversationId}}
+          class="form-control">
+        <button type="submit" class="btn btn-warning">Send</button>
+      </span>
     </div>
-</div> --}}
-<div class="card">
-    <div class="card-header">
-        {{viewData.title}}
-    </div>
-    <div class="card-body">
-        {{#if viewData.conversations}}
-        <div id="ManagePost" class="dataTables_wrapper dt-bootstrap4">
-            <div class="row">
-                <div class="col-sm-12">
-                    <table class="table table-bordered table-striped dataTable dtr-inline">
-                        <thead>
-                            <tr style="text-align: center">
-                                <th rowspan="1" colspan="1" style="">Conversation ID</th>
-                                <th rowspan="1" colspan="1" style="">Lasted Update</th>
-                                <th rowspan="1" colspan="1" style="">Senders</th>
-                                <th rowspan="1" colspan="1" style="">Message</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{!-- single page data --}}
-                            {{#each viewData.conversations}}
-                            <tr style="text-align: center">
-                                <td>{{this.id}}</td>
-                                <td>{{formatDate this.updated_time}}</td>
-                                <td>
-                                    <a data-toggle="collapse" href="#collapseExample" role="button"
-                                        aria-expanded="false" aria-controls="collapseExample" id="toggleButton"
-                                        style="color: white;">
-                                        <i class="fa fa-plus" id="icon"></i> <span id="toggleText">Show</span>
-                                    </a>
-                                    <div class="collapse" id="collapseExample">
-                                        {{#each this.senders.data}}
-                                        <a>{{increment @index}}. {{this.name}}</a><br>
-                                        {{/each}}
-                                    </div>
+  </form>
+</div>
+{{/if}}
+<!-- /.card-footer-->
+</div>
 
-                                </td>
-                                <td style="text-align: center">
-                                    <a class="btn btn-primary btn-sm"
-                                        href='/admin/conversations/message?conversationId={{this.id}}'
-                                        aria-label="detail">
-                                        <i class="fas fa-folder">
-                                        </i>
-                                        Detail
-                                    </a>
-                                </td>
-                            </tr>
-                            {{/each}}
-                        </tbody>
-                        <tfoot>
-                            <tr style="text-align: center">
-                                <th rowspan="1" colspan="1" style="">Conversation ID</th>
-                                <th rowspan="1" colspan="1">Lasted Update</th>
-                                <th rowspan="1" colspan="1">Senders</th>
-                                <th rowspan="1" colspan="1" style="">Message</th>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12 col-md-5">
-                    <div class="dataTables_info" id="ManagePost_info" role="status" aria-live="polite">Showing 10 of
-                        totals
-                        entries</div>
-                </div>
-                <div class="col-sm-12 col-md-7">
-                    <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
-                        <ul class="pagination">
-                            <li class="paginate_button page-item previous" id="example1_previous"><a href="#"
-                                    aria-controls="example1" data-dt-idx="0" tabindex="0"
-                                    class="page-link text-white">Previous</a>
-                            </li>
-                            <li class="paginate_button page-item next" id="example1_next"><a href="#"
-                                    aria-controls="example1" data-dt-idx="7" tabindex="0"
-                                    class="page-link text-white">Next</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            {{else}}
-            <p>No Conversation Found</p>
-            {{/if}}
-        </div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var button = document.getElementById('toggleButton');
-            var icon = document.getElementById('icon');
-            var toggleText = document.getElementById('toggleText');
-
-            button.addEventListener('click', function () {
-                var isExpanded = button.getAttribute('aria-expanded') === 'true';
-
-                // Toggle aria-expanded attribute
-                button.setAttribute('aria-expanded', (!isExpanded).toString());
-
-                // Toggle text and icon
-                if (isExpanded) {
-                    toggleText.innerText = 'Show';
-                    icon.classList.remove('fa-minus');
-                    icon.classList.add('fa-plus');
-                } else {
-                    toggleText.innerText = 'Hide';
-                    icon.classList.remove('fa-plus');
-                    icon.classList.add('fa-minus');
-                }
-            });
-        });
-    </script>
-    {{/inline}}
-    {{/adminLayoutManagement}}
+{{/inline}}
+{{/adminLayoutManagement}}

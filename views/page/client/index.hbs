@@ -1,0 +1,27 @@
+{{#> app}}
+{{#*inline "content"}}
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous"
+    src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v18.0&appId=1100983394414551"
+    nonce="Gqm8VbsX"></script>
+<div class="row">
+    <div class="fb-page" data-href="https://www.facebook.com/Testpage1201" data-tabs="timeline,events,messages"
+        data-width="750" data-height="" data-small-header="false" data-adapt-container-width="true"
+        data-hide-cover="false" data-show-facepile="true">
+        <blockquote cite="https://www.facebook.com/Testpage1201" class="fb-xfbml-parse-ignore">
+            <a href="https://www.facebook.com/Testpage1201">Test page</a>
+        </blockquote>
+    </div>
+</div>
+
+<script>
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '1100983394414551',
+            xfbml: true,
+            version: 'v18.0'
+        });
+    };
+</script>
+{{/inline}}
+{{/app}}

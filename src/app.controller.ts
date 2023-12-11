@@ -7,7 +7,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class AppController {
   constructor(private readonly appService: AppService) { }
   @Get("/")
-  @Redirect('/admin')
+  @Render("page/client/index")
   index() {
     let viewData = [];
     viewData['title'] = 'Home Page - Facebook Client Page';
@@ -16,7 +16,7 @@ export class AppController {
     };
   }
   @Get("/about")
-  @Render('about')
+  @Render('page/client/about')
   about() {
     const viewData = [];
     viewData['title'] = 'About us - Online Store';

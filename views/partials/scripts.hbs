@@ -45,11 +45,17 @@
   window.fbAsyncInit = function () {
     FB.init({
       appId: '1100983394414551',
+      cookie: true,
+      status: true,
       xfbml: true,
       version: 'v18.0'
     });
   };
-
+  FB.login(function (response) {
+    if (response.session && response.perms) {
+      alert(response.perms);
+    }
+  }, { perms: 'user_address, user_mobile_phone' });
   (function (d, s, id) {
     var js, fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) return;

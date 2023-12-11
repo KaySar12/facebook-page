@@ -47,6 +47,20 @@ async function bootstrap() {
   hbsUtils(hbs).registerWatchedPartials(join(__dirname, '..', 'views/partials'));
   hbs.registerPartials(join(__dirname, '..', 'views/page'));
   hbsUtils(hbs).registerWatchedPartials(join(__dirname, '..', 'views/page'));
+  hbs.registerHelper("when", function (operand_1, operator, operand_2, options) {
+    var operators = {
+      'eq': function (l, r) { return l == r; },
+      'noteq': function (l, r) { return l != r; },
+      'gt': function (l, r) { return Number(l) > Number(r); },
+      'or': function (l, r) { return l || r; },
+      'and': function (l, r) { return l && r; },
+      '%': function (l, r) { return (l % r) === 0; }
+    }
+      , result = operators[operator](operand_1, operand_2);
+
+    if (result) return options.fn(this);
+    else return options.inverse(this);
+  });
   hbs.registerHelper('formatDate', function (isoDate: string) {
     const date = new Date(isoDate);
     return format(
@@ -69,8 +83,11 @@ async function bootstrap() {
   hbs.registerHelper("increment", function (value, options) {
     return parseInt(value) + 1;
   });
+  hbs.registerHelper("first_element", function (data: any[]) {
+    return data[0];
+  });
   app.setViewEngine('hbs');
-  const port = 3000
+  const port = 8000
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
   await app.listen(port);
