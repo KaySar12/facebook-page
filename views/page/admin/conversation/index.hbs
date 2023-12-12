@@ -28,7 +28,7 @@
     <div class="direct-chat-msg">
       <div class="direct-chat-infos clearfix">
         <span class="direct-chat-name float-left">{{this.from.name}}</span>
-        <span class="direct-chat-timestamp float-right">23 Jan 2:00 pm</span>
+        <span class="direct-chat-timestamp float-right">{{formatDate this.created_time}}</span>
       </div>
       <!-- /.direct-chat-infos -->
       <img class="direct-chat-img"
@@ -45,7 +45,7 @@
     <div class="direct-chat-msg right">
       <div class="direct-chat-infos clearfix">
         <span class="direct-chat-name float-right">{{this.from.name}}</span>
-        <span class="direct-chat-timestamp float-left">23 Jan 2:05 pm</span>
+        <span class="direct-chat-timestamp float-left">{{formatDate this.created_time}}</span>
       </div>
       <!-- /.direct-chat-infos -->
       <img class="direct-chat-img"

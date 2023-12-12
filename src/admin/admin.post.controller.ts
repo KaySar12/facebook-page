@@ -19,14 +19,17 @@ export class AdminPostController {
     async index(@Query() query: PageDto, @Req() req: any) {
         // Logging the value of prev
         const response = await this.getPost(query.next, query.prev);
-
+        const user = req.session.passport.user.user
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin -  Manage Post page';
+        viewData['userName'] = `${user?.firstName} ${user?.lastName}`
         viewData['posts'] = response.data;
         viewData['like_count'] = response.data;
         viewData['attachment_count'] = response.data;
         viewData['nextPage'] = response.paging?.cursors?.after || '';
         viewData['previousPage'] = response.paging?.cursors?.before || '';
+        const getPages = await this.facebookService.getPages(req.user.accessToken);
+        viewData['allPages'] = getPages;
         return {
             viewData: viewData,
         };
@@ -99,10 +102,12 @@ export class AdminPostController {
     }
     @Get('/:id')
     @Render('page/admin/posts/edit')
-    async editPostView(@Param('id') id: string) {
+    async editPostView(@Param('id') id: string, @Req() req) {
         const viewData = [];
         viewData['title'] = 'Admin Page - Edit Post - Facebook Page';
         viewData['post'] = await this.facebookService.getPostbyId(id);
+        const getPages = await this.facebookService.getPages(req.user.accessToken);
+        viewData['allPages'] = getPages;
         return {
             viewData: viewData,
         };

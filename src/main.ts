@@ -48,7 +48,7 @@ async function bootstrap() {
   hbs.registerPartials(join(__dirname, '..', 'views/page'));
   hbsUtils(hbs).registerWatchedPartials(join(__dirname, '..', 'views/page'));
   hbs.registerHelper("when", function (operand_1, operator, operand_2, options) {
-    var operators = {
+    let operators = {
       'eq': function (l, r) { return l == r; },
       'noteq': function (l, r) { return l != r; },
       'gt': function (l, r) { return Number(l) > Number(r); },

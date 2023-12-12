@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, Redirect, Render, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Query, Redirect, Render, Req, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { query } from "express";
 import { CloudinaryService } from "src/cloudinary/cloudinary.service";
@@ -14,16 +14,21 @@ export class AdminCommentController {
     }
     @Get('/')
     @Render('page/admin/comment/index')
-    async index() {
+    async index(@Req() req: any) {
+        const user = req.session.passport.user.user
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin - Manage Comment';
+        viewData['userName'] = `${user?.firstName} ${user?.lastName}`
+        const getPages = await this.facebookService.getPages(req.user.accessToken);
+        viewData['allPages'] = getPages;
         return {
             viewData: viewData,
         };
     }
     @Get('/getComment')
     @Render('page/admin/comment/index')
-    async getCommentbyPostId(@Query() query) {
+    async getCommentbyPostId(@Query() query, @Req() req: any) {
+        const user = req.session.passport.user.user
         console.log(query);
         const next = query.next || '';
         const prev = query.prev || '';
@@ -31,6 +36,7 @@ export class AdminCommentController {
         console.log(response);
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin - Manage Comment';
+        viewData['userName'] = `${user?.firstName} ${user?.lastName}`
         viewData['postId'] = query.id || '';
         viewData['comments'] = response.data;
         viewData['nextPage'] = response.paging?.cursors?.after || '';

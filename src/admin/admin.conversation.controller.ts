@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, Render, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Query, Render, Req, Res, UseGuards } from "@nestjs/common";
 import { query } from "express";
 import { SendMessageDto } from "src/facebook/dto/sendMessage.dto";
 import { FacebookAuthGuard } from "src/facebook/facebook.guard";
@@ -11,10 +11,12 @@ export class AdminConversationController {
     }
     @Get('/data')
     @Render('page/admin/conversation/indexData')
-    async index() {
+    async index(@Req() req: any) {
         const getConversations = await this.facebookService.getPageConversations();
+        const user = req.session.passport.user.user
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin - Manage Conversations';
+        viewData['userName'] = `${user?.firstName} ${user?.lastName}`
         viewData['conversations'] = getConversations.data;
         console.log(getConversations);
         console.log(getConversations.data[0].senders);
@@ -25,43 +27,55 @@ export class AdminConversationController {
     }
     @Get('/')
     @Render('page/admin/conversation/index')
-    async indexNew() {
+    async indexNew(@Req() req: any) {
         const getConversations = await this.facebookService.getPageConversations();
+        const user = req.session.passport.user.user
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin - Manage Conversations';
+        viewData['userName'] = `${user?.firstName} ${user?.lastName}`
         viewData['conversations'] = getConversations.data;
+        const getPages = await this.facebookService.getPages(req.user.accessToken);
+        viewData['allPages'] = getPages;
         return {
             viewData: viewData,
         };
     }
     @Get('/messageData')
-    @Render('page/admin/message/indexData')
-    async getMessagebyId(@Query() query) {
+    @Render('page/admin/message/index')
+    async getMessagebyId(@Query() query, @Req() req: any) {
         const conversationId = query.conversationId;
         const getConversationbyId = await this.facebookService.getConversationById(conversationId);
+        const user = req.session.passport.user.user;
         const messages = getConversationbyId.messages.data;
         const viewData = [];
         console.log(messages);
         viewData['title'] = 'Admin Page - Admin - Manage Messages in a Conversation';
+        viewData['userName'] = `${user?.firstName} ${user?.lastName}`
         viewData['messages'] = messages;
         viewData['conversationId'] = conversationId;
+        const getPages = await this.facebookService.getPages(req.user.accessToken);
+        viewData['allPages'] = getPages;
         return {
             viewData: viewData
         }
     }
     @Get('/message')
     @Render('page/admin/conversation/index')
-    async getMessagebyIdNew(@Query() query) {
+    async getMessagebyIdNew(@Query() query, @Req() req: any) {
         const viewData = [];
         const getConversations = await this.facebookService.getPageConversations();
+        const user = req.session.passport.user.user;
         const conversationId = query.conversationId;
         if (conversationId) {
             const getConversationbyId = await this.facebookService.getConversationById(conversationId);
             const messages = getConversationbyId.messages.data;
             viewData['messages'] = messages;
+            viewData['userName'] = `${user?.firstName} ${user?.lastName}`
             viewData['conversationId'] = conversationId;
             viewData['senders'] = getConversationbyId.senders.data;
             console.log(getConversationbyId.senders);
+            const getPages = await this.facebookService.getPages(req.user.accessToken);
+            viewData['allPages'] = getPages;
         }
         viewData['title'] = 'Admin Page - Admin - Manage Messages in a Conversation';
         viewData['conversations'] = getConversations.data;

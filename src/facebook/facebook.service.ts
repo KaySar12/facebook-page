@@ -24,9 +24,10 @@ export class FacebookService {
         try {
             const response = await axios.request(options);
             // console.log(response.data);
+            const pageId = '179668665228573';
             const tokenData = response.data;
             console.log(tokenData.data.profile_id);
-            if (!tokenData.data.is_valid || tokenData.data.profile_id != '179668665228573') {
+            if (!tokenData.data.is_valid || tokenData.data.profile_id != pageId) {
                 console.log('invalid token detected')
                 return false;
             }
@@ -75,6 +76,40 @@ export class FacebookService {
             console.error('error at getUserLongLivesAccessToken method');
         }
     }
+    // Step 2: Get Page Access Token
+    async getPageAccessTokenById(userAccessToken: string, pageId: string) {
+        try {
+            const response = await axios.get(`https://graph.facebook.com/v18.0/me/accounts?access_token=${userAccessToken}`);
+            const pages = response.data.data;
+            const page = pages.find((p) => p.id === pageId);
+            console.log(page);
+            if (page) {
+                return page.access_token;
+            } else {
+                console.error('Page not found for the given user.');
+                return null;
+            }
+        } catch (error) {
+            console.error('Error getting Page Access Token:', error.response.data);
+            return null;
+        }
+    }
+    async getPages(userAccessToken: string) {
+        const options = {
+            method: 'GET',
+            url: `https://graph.facebook.com/me/accounts?fields=id,name,category`,
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Authorization': `Bearer ${userAccessToken} `
+            },
+        }
+        try {
+            const response = await axios.request(options);
+            return response.data;
+        } catch (error) {
+            console.error('error at getPageAccess method');
+        }
+    }
     async getPageAccessToken(userAccessToken: string): Promise<any> {
         const options = {
             method: 'GET',
@@ -87,17 +122,18 @@ export class FacebookService {
         try {
             const response = await axios.request(options);
             //console.log(response.data);
-            return response.data.data[0].access_token;
+            return response.data.data[1].access_token;
         } catch (error) {
             console.error('error at getPageAccess method');
         }
     }
     async getPageDetail() {
         const accessToken = this.getCurrentPageAccessToken();
+        const pageId = '179668665228573'
         const fields = 'link,followers_count,fan_count,name,phone,albums{photos{id,link,picture}},about,picture{url,height,width,cache_key,is_silhouette},release_date,location,current_location,general_info,personal_info,engagement,featured_video,emails,posts.limit(10){from,full_picture,icon,id,created_time,likes{id},comments{id},status_type,permalink_url,message}'
         const options = {
             method: 'GET',
-            url: `https://graph.facebook.com/v18.0/179668665228573?fields=${fields}`,
+            url: `https://graph.facebook.com/v18.0/${pageId}?fields=${fields}`,
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
                 'Authorization': `Bearer ${accessToken} `
@@ -114,9 +150,10 @@ export class FacebookService {
     }
     async getPageConversations(): Promise<any> {
         const accessToken = this.pageAccessToken;
+        const pageId = '179668665228573';
         const options = {
             method: 'GET',
-            url: 'https://graph.facebook.com/v18.0/179668665228573/conversations?fields=name,id,senders,messages{message,from,to},updated_time',
+            url: `https://graph.facebook.com/v18.0/${pageId}/conversations?fields=name,id,senders,messages{message,from,to},updated_time`,
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
                 'Authorization': `Bearer ${accessToken} `
@@ -150,10 +187,11 @@ export class FacebookService {
     }
     async getPagePost() {
         const access_token = this.pageAccessToken;
+        const pageId = '179668665228573';
         const fields = 'id,created_time,message,story,attachments,comments,likes.limit(1).summary(true)'
         const options = {
             method: 'GET',
-            url: `https://graph.facebook.com/v18.0/179668665228573/posts?limit=10&fields=${fields}`,
+            url: `https://graph.facebook.com/v18.0/${pageId}/posts?limit=10&fields=${fields}`,
             headers: {
                 'content-type': 'application/json',
                 'Authorization': `Bearer ${access_token}`,
@@ -169,10 +207,11 @@ export class FacebookService {
     }
     async getNextPagePost(next: string) {
         const access_token = this.pageAccessToken;
+        const pageId = '179668665228573';
         const fields = 'id,created_time,message,story,attachments,comments,likes.limit(1).summary(true)'
         const options = {
             method: 'GET',
-            url: `https://graph.facebook.com/v18.0/179668665228573/posts?limit=10&after=${next}&fields=${fields}`,
+            url: `https://graph.facebook.com/v18.0/${pageId}/posts?limit=10&after=${next}&fields=${fields}`,
             headers: {
                 'content-type': 'application/json',
                 'Authorization': `Bearer ${access_token}`,
@@ -189,10 +228,11 @@ export class FacebookService {
     }
     async getPrevPagePost(previous: string) {
         const access_token = this.pageAccessToken;
+        const pageId = '179668665228573';
         const fields = 'id,created_time,message,story,attachments,comments,likes.limit(1).summary(true)'
         const options = {
             method: 'GET',
-            url: `https://graph.facebook.com/v18.0/179668665228573/posts?limit=10&previous=${previous}&fields=${fields}`,
+            url: `https://graph.facebook.com/v18.0/${pageId}/posts?limit=10&previous=${previous}&fields=${fields}`,
             headers: {
                 'content-type': 'application/json',
                 'Authorization': `Bearer ${access_token}`,
@@ -208,10 +248,11 @@ export class FacebookService {
     }
     async createNewPost(params: CreateNewPostDto): Promise<any> {
         const access_token = this.pageAccessToken;
+        const pageId = '179668665228573'
         console.log(params);
         const options = {
             method: 'POST',
-            url: `https://graph.facebook.com/v18.0/179668665228573/feed`,
+            url: `https://graph.facebook.com/v18.0/${pageId}/feed`,
             headers: {
                 'content-type': 'application/json',
                 'Authorization': `Bearer ${access_token}`,
@@ -232,10 +273,11 @@ export class FacebookService {
     }
     async createNewPostWithFile(params: CreateNewPostDto, imageId: string): Promise<any> {
         const access_token = this.pageAccessToken;
+        const pageId = '179668665228573';
         console.log(params);
         const options = {
             method: 'POST',
-            url: `https://graph.facebook.com/v18.0/179668665228573/feed`,
+            url: `https://graph.facebook.com/v18.0/${pageId}/feed`,
             headers: {
                 'content-type': 'application/json',
                 'Authorization': `Bearer ${access_token}`,
@@ -256,9 +298,10 @@ export class FacebookService {
     }
     async sendMessageToUser(params: SendMessageDto) {
         const access_token = this.pageAccessToken;
+        const pageId = '179668665228573';
         const options = {
             method: 'POST',
-            url: 'https://graph.facebook.com/v18.0/179668665228573/messages',
+            url: `https://graph.facebook.com/v18.0/${pageId}/messages`,
             headers: {
                 'content-type': 'application/json',
                 'Authorization': `Bearer ${access_token}`,
@@ -515,9 +558,10 @@ export class FacebookService {
     }
     async uploadPhotoNoStory(url: string) {
         console.log(url);
+        const pageId = '179668665228573';
         const options = {
             method: 'Post',
-            url: `https://graph.facebook.com/179668665228573/photos?no_story=true`,
+            url: `https://graph.facebook.com/${pageId}/photos?no_story=true`,
             headers: {
                 'content-type': 'application/json',
                 'Authorization': `Bearer ${this.pageAccessToken}`,
@@ -535,9 +579,10 @@ export class FacebookService {
         }
     }
     async uploadPhoto(url: string) {
+        const pageId = '179668665228573';
         const options = {
             method: 'Post',
-            url: `https://graph.facebook.com/179668665228573/photos?`,
+            url: `https://graph.facebook.com/${pageId}/photos?`,
             headers: {
                 'content-type': 'application/json',
                 'Authorization': `Bearer ${this.pageAccessToken}`,

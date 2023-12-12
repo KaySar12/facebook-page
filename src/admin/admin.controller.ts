@@ -1,4 +1,4 @@
-import { UseGuards, Controller, Get, Request, Render, Req, Res, HttpStatus } from "@nestjs/common";
+import { UseGuards, Controller, Get, Request, Render, Req, Res, HttpStatus, ForbiddenException, NotFoundException } from "@nestjs/common";
 import { AuthGuard, } from "@nestjs/passport";
 import { UserService } from "src/auth/user.service";
 import { FacebookAuthGuard } from "src/facebook/facebook.guard";
@@ -40,16 +40,16 @@ export class AdminController {
     @UseGuards(FacebookAuthGuard)
     @Render('page/admin/index')
     async index(@Req() req: any, @Res() res) {
+        console.log(req.session.passport.user.user)
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin - Manage Home Page';
+
         if (req.user) {
             const userData = req.user;
             const checkExist = await this.userService.checkExist(userData.user.email);
             const userId = await this.facebookService.getUserId(userData.accessToken);
-            console.log(userData.accessToken);
             if (userId === '1425721644676951') {
                 const currentPageAccessToken = this.facebookService.getCurrentPageAccessToken()
-                console.log(currentPageAccessToken);
                 const checkToken = await this.facebookService.checkTokenData(currentPageAccessToken, userData.accessToken);
                 if (!currentPageAccessToken || !checkToken) {
                     await this.renewPageAccessToken(req.user.accessToken);
@@ -67,6 +67,8 @@ export class AdminController {
                 await this.userService.create(createUser)
             }
             const pageDetail = await this.facebookService.getPageDetail();
+            const getPages = await this.facebookService.getPages(userData.accessToken);
+            viewData['allPages'] = getPages;
             viewData['page'] = pageDetail;
             viewData['userName'] = `${checkExist.firstName} ${checkExist.lastName}`;
         }
@@ -91,20 +93,23 @@ export class AdminController {
     @UseGuards(FacebookAuthGuard)
     @Render('page/admin/about/index')
     async about(@Req() req: any, @Res() res) {
-
+        const user = req.session.passport.user.user
         const response = await this.facebookService.getPageDetail();
         const viewData = [];
         viewData['id'] = response.id || 'Unavailable';
         viewData['author'] = response.name || 'Unavailable';
         viewData['description'] = response.about || 'Unavailable';
+        const getPages = await this.facebookService.getPages(req.user.accessToken);
+        viewData['allPages'] = getPages;
+        viewData['userName'] = `${user?.firstName} ${user?.lastName}`
         return {
             viewData: viewData,
         };
     }
-    @Get('/protected')
+    @Get('/testApi')
     @UseGuards(FacebookAuthGuard)
-    getHello(@Request() req: any): string {
-        return req.user;
+    async testAPI(@Request() req: any) {
+        console.log(req.session.passport.user.user)
+        // return await this.facebookService.getPageAccessTokenById(req.user.accessToken, '186204747910154');
     }
-
 }

@@ -25,6 +25,8 @@ export class User extends BaseEntity {
   firstName: string;
   @Column('text')
   lastName: string;
+  // @Column('text')
+  // currentSelectPage: string
   @CreateDateColumn()
   createdDate: Date;
   @BeforeInsert()

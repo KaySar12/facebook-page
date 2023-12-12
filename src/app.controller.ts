@@ -15,6 +15,15 @@ export class AppController {
       viewData: viewData
     };
   }
+  @Get("/error")
+  @Render("page/error/index")
+  error() {
+    let viewData = [];
+    viewData['title'] = 'Error Page';
+    return {
+      viewData: viewData
+    };
+  }
   @Get("/about")
   @Render('page/client/about')
   about() {
@@ -23,6 +32,15 @@ export class AppController {
     viewData['subtitle'] = "About us";
     viewData['description'] = "This is an about page ...";
     viewData['author'] = 'Developed by: Your Name';
+    return {
+      viewData: viewData,
+    };
+  }
+  @Get("/login")
+  @Render('page/client/login/index')
+  login() {
+    const viewData = [];
+    viewData['title'] = 'Login';
     return {
       viewData: viewData,
     };
