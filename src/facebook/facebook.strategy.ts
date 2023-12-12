@@ -12,19 +12,21 @@ export class FacebookStrategy extends PassportStrategy(Strategy) {
             scope: 'email',
             profileFields: ['emails', 'name'],
         });
-     }
+    }
     async validate(
         accessToken: string,
         refreshToken: string,
         profile: Profile,
         done: (err: any, user: any, info?: any) => void,
     ): Promise<any> {
-        const { name, emails } = profile;
+
+        const { name, emails, id } = profile;
         const user = {
             email: emails[0].value,
             firstName: name.givenName,
             lastName: name.familyName,
-            pageId:'',
+            id: id,
+            currentSelectPage:undefined,
         };
         const payload = {
             user,

@@ -1,4 +1,4 @@
-import { UseGuards, Controller, Get, Request, Render, Req, Res, HttpStatus, ForbiddenException, NotFoundException } from "@nestjs/common";
+import { UseGuards, Controller, Get, Request, Render, Req, Res, HttpStatus, ForbiddenException, NotFoundException, Param } from "@nestjs/common";
 import { AuthGuard, } from "@nestjs/passport";
 import { UserService } from "src/auth/user.service";
 import { FacebookAuthGuard } from "src/facebook/facebook.guard";
@@ -41,18 +41,20 @@ export class AdminController {
     @Render('page/admin/index')
     async index(@Req() req: any, @Res() res) {
         console.log(req.session.passport.user.user)
+        const currentPageId = req.session.passport.user.currentSelectPage || '179668665228573';
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin - Manage Home Page';
 
         if (req.user) {
             const userData = req.user;
             const checkExist = await this.userService.checkExist(userData.user.email);
-            const userId = await this.facebookService.getUserId(userData.accessToken);
-            if (userId === '1425721644676951') {
+            const userId = userData.user.id;
+            const ownerId = '1425721644676951';
+            if (userId === ownerId) {
                 const currentPageAccessToken = this.facebookService.getCurrentPageAccessToken()
                 const checkToken = await this.facebookService.checkTokenData(currentPageAccessToken, userData.accessToken);
                 if (!currentPageAccessToken || !checkToken) {
-                    await this.renewPageAccessToken(req.user.accessToken);
+                    await this.renewPageAccessToken(req.user.accessToken, currentPageId);
                 }
             }
             if (!checkExist) {
@@ -76,11 +78,21 @@ export class AdminController {
             viewData: viewData,
         };
     }
-    async renewPageAccessToken(ownerAccesToken: string) {
-        const longLiveToken = await this.facebookService.getUserLongLivesAccessToken(ownerAccesToken);
-        const pageAccessToken = await this.facebookService.getPageAccessToken(longLiveToken);
+    async renewPageAccessToken(ownerAccessToken: string, pageId?: string) {
+        const longLiveToken = await this.facebookService.getUserLongLivesAccessToken(ownerAccessToken);
+        const pageAccessToken = await this.facebookService.getPageAccessTokenById(longLiveToken, pageId);
         this.facebookService.setCurrentPageAccessToken(pageAccessToken);
         console.log('renew Page Token');
+    }
+    @Get('/getPage/:pageId')
+    @UseGuards(FacebookAuthGuard)
+    async getPage(@Param('pageId') pageId: string, @Res() res, @Req() req) {
+        //set current select page to session
+        req.session.passport.user.currentSelectPage = pageId;
+        //handle change page
+        this.facebookService.setCurrentPageId(pageId);
+        console.log(pageId);
+        res.redirect('/admin')
     }
     @Get('/postData')
     @UseGuards(FacebookAuthGuard)
