@@ -41,7 +41,7 @@ export class AdminController {
     @Render('page/admin/index')
     async index(@Req() req: any, @Res() res) {
         console.log(req.session.passport.user.user)
-        const currentPageId = req.session.passport.user.currentSelectPage || '179668665228573';
+        const currentPageId = req.session.passport.user.currentSelectPage ;
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin - Manage Home Page';
 
@@ -58,7 +58,7 @@ export class AdminController {
                 }
             }
             if (!checkExist) {
-                console.log(`User ID:${userId}`);
+                console.log(`New User Detected Id:${userId}`);
                 const createUser = {
                     userId: userId,
                     email: userData.user.email,
@@ -69,9 +69,10 @@ export class AdminController {
                 await this.userService.create(createUser)
             }
             const pageDetail = await this.facebookService.getPageDetail();
-            const getPages = await this.facebookService.getPages(userData.accessToken);
-            viewData['allPages'] = getPages;
             viewData['page'] = pageDetail;
+            const getPages = await this.facebookService.getPages(userData.accessToken);
+            viewData['pageId'] =  this.facebookService.getCurrentPageId();
+            viewData['allPages'] = getPages;
             viewData['userName'] = `${checkExist.firstName} ${checkExist.lastName}`;
         }
         return {
@@ -91,7 +92,7 @@ export class AdminController {
         req.session.passport.user.currentSelectPage = pageId;
         //handle change page
         this.facebookService.setCurrentPageId(pageId);
-        console.log(pageId);
+        console.log(this.facebookService.getCurrentPageId());
         res.redirect('/admin')
     }
     @Get('/postData')
@@ -113,6 +114,7 @@ export class AdminController {
         viewData['description'] = response.about || 'Unavailable';
         const getPages = await this.facebookService.getPages(req.user.accessToken);
         viewData['allPages'] = getPages;
+        viewData['pageId'] =  this.facebookService.getCurrentPageId() || '179668665228573';
         viewData['userName'] = `${user?.firstName} ${user?.lastName}`
         return {
             viewData: viewData,

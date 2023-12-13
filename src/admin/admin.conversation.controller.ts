@@ -69,11 +69,11 @@ export class AdminConversationController {
         if (conversationId) {
             const getConversationbyId = await this.facebookService.getConversationById(conversationId);
             const messages = getConversationbyId.messages.data;
+
             viewData['messages'] = messages;
             viewData['userName'] = `${user?.firstName} ${user?.lastName}`
             viewData['conversationId'] = conversationId;
             viewData['senders'] = getConversationbyId.senders.data;
-            console.log(getConversationbyId.senders);
             const getPages = await this.facebookService.getPages(req.user.accessToken);
             viewData['allPages'] = getPages;
         }

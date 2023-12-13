@@ -38,7 +38,7 @@ export class FacebookService {
         try {
             const response = await axios.request(options);
             // console.log(response.data);
-            const pageId = this.getCurrentPageId || '179668665228573';
+            const pageId = this.getCurrentPageId() || '179668665228573';
             const tokenData = response.data;
             console.log(tokenData.data.profile_id);
             if (!tokenData.data.is_valid || tokenData.data.profile_id != pageId) {
@@ -142,7 +142,7 @@ export class FacebookService {
     }
     async getPageDetail() {
         const accessToken = this.getCurrentPageAccessToken();
-        const pageId = this.getCurrentPageId || '179668665228573'
+        const pageId = this.getCurrentPageId() || '179668665228573'
         const fields = 'link,followers_count,fan_count,name,phone,albums{photos{id,link,picture}},about,picture{url,height,width,cache_key,is_silhouette},release_date,location,current_location,general_info,personal_info,engagement,featured_video,emails,posts.limit(10){from,full_picture,icon,id,created_time,likes{id},comments{id},status_type,permalink_url,message}'
         const options = {
             method: 'GET',
@@ -157,13 +157,12 @@ export class FacebookService {
             // console.log(response.data);
             return response.data;
         } catch (error) {
-            console.log(error);
             console.error('error at getPageDetail method');
         }
     }
     async getPageConversations(): Promise<any> {
         const accessToken = this.pageAccessToken;
-        const pageId = this.getCurrentPageId || '179668665228573';
+        const pageId = this.getCurrentPageId() || '179668665228573';
         const options = {
             method: 'GET',
             url: `https://graph.facebook.com/v18.0/${pageId}/conversations?fields=name,id,senders,messages{message,from,to},updated_time`,
@@ -200,7 +199,7 @@ export class FacebookService {
     }
     async getPagePost() {
         const access_token = this.pageAccessToken;
-        const pageId = this.getCurrentPageId || '179668665228573';
+        const pageId = this.getCurrentPageId() || '179668665228573';
         const fields = 'id,created_time,message,story,attachments,comments,likes.limit(1).summary(true)'
         const options = {
             method: 'GET',
@@ -220,7 +219,7 @@ export class FacebookService {
     }
     async getNextPagePost(next: string) {
         const access_token = this.pageAccessToken;
-        const pageId = this.getCurrentPageId || '179668665228573';
+        const pageId = this.getCurrentPageId() || '179668665228573';
         const fields = 'id,created_time,message,story,attachments,comments,likes.limit(1).summary(true)'
         const options = {
             method: 'GET',
@@ -241,7 +240,7 @@ export class FacebookService {
     }
     async getPrevPagePost(previous: string) {
         const access_token = this.pageAccessToken;
-        const pageId = this.getCurrentPageId || '179668665228573';
+        const pageId = this.getCurrentPageId() || '179668665228573';
         const fields = 'id,created_time,message,story,attachments,comments,likes.limit(1).summary(true)'
         const options = {
             method: 'GET',
@@ -261,7 +260,7 @@ export class FacebookService {
     }
     async createNewPost(params: CreateNewPostDto): Promise<any> {
         const access_token = this.pageAccessToken;
-        const pageId = this.getCurrentPageId || '179668665228573'
+        const pageId = this.getCurrentPageId() || '179668665228573'
         console.log(params);
         const options = {
             method: 'POST',
@@ -286,7 +285,7 @@ export class FacebookService {
     }
     async createNewPostWithFile(params: CreateNewPostDto, imageId: string): Promise<any> {
         const access_token = this.pageAccessToken;
-        const pageId = this.getCurrentPageId || '179668665228573';
+        const pageId = this.getCurrentPageId() || '179668665228573';
         console.log(params);
         const options = {
             method: 'POST',
@@ -311,7 +310,7 @@ export class FacebookService {
     }
     async sendMessageToUser(params: SendMessageDto) {
         const access_token = this.pageAccessToken;
-        const pageId = this.getCurrentPageId || '179668665228573';
+        const pageId = this.getCurrentPageId() || '179668665228573';
         const options = {
             method: 'POST',
             url: `https://graph.facebook.com/v18.0/${pageId}/messages`,
@@ -571,7 +570,7 @@ export class FacebookService {
     }
     async uploadPhotoNoStory(url: string) {
         console.log(url);
-        const pageId = this.getCurrentPageId || '179668665228573';
+        const pageId = this.getCurrentPageId() || '179668665228573';
         const options = {
             method: 'Post',
             url: `https://graph.facebook.com/${pageId}/photos?no_story=true`,
@@ -592,7 +591,7 @@ export class FacebookService {
         }
     }
     async uploadPhoto(url: string) {
-        const pageId = this.getCurrentPageId || '179668665228573';
+        const pageId = this.getCurrentPageId() || '179668665228573';
         const options = {
             method: 'Post',
             url: `https://graph.facebook.com/${pageId}/photos?`,
