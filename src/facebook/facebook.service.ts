@@ -70,7 +70,7 @@ export class FacebookService {
     async getUserLongLivesAccessToken(accessToken: string) {
         const options = {
             method: "GET",
-            url: `https://graph.facebook.com/v18.0/oauth/access_token?grant_type=fb_exchange_token&client_id=1100983394414551&client_secret=6d4c80736b6935e9ae26c5a50a484ba0&fb_exchange_token=${accessToken}`,
+            url: `https://graph.facebook.com/v18.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${this.configService.get('client_id')}&client_secret=${this.configService.get('client_secret')}&fb_exchange_token=${accessToken}`,
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
             },
@@ -183,7 +183,7 @@ export class FacebookService {
         const accessToken = this.pageAccessToken;
         const options = {
             method: 'GET',
-            url: `https://graph.facebook.com/v18.0/${conversationId}?fields=name,id,senders,messages{message,from,to,created_time},updated_time`,
+            url: `https://graph.facebook.com/v18.0/${conversationId}?fields=name,id,senders,messages{message,from,to,created_time,attachments},updated_time`,
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
                 'Authorization': `Bearer ${accessToken} `
@@ -322,6 +322,39 @@ export class FacebookService {
                 recipient: { 'id': params.recipient },
                 messaging_type: params.messaging_type,
                 message: { 'text': params.message },
+            },
+        }
+        try {
+            //console.log(options.data);
+            const response = await axios.request(options);
+            //  console.log(response.data);
+            return response.data;
+        } catch (error) {
+            console.error(error.response.data);
+        }
+    }
+    async sendMessageAttachment(params: any) {
+        const access_token = this.pageAccessToken;
+        const pageId = this.getCurrentPageId() || '179668665228573';
+        const options = {
+            method: 'POST',
+            url: `https://graph.facebook.com/v18.0/${pageId}/messages`,
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': `Bearer ${access_token}`,
+            },
+            data: {
+                recipient: { 'id': params.recipient },
+                messaging_type: params.messaging_type,
+                message: {
+                    'attachment': {
+                        "type": "image",
+                        "payload": {
+                            "url": params.url,
+                            "is_reusable": true
+                        }
+                    }
+                },
             },
         }
         try {

@@ -1,16 +1,19 @@
-import { Controller, Get, Redirect, Render } from '@nestjs/common';
+import { Controller, Get, Param, Redirect, Render } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiTags } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 
-@Controller()
+@Controller('/')
 @ApiTags('app')
 export class AppController {
-  constructor(private readonly appService: AppService) { }
+  constructor(private configService: ConfigService,
+    private readonly appService: AppService) { }
   @Get("/")
   @Render("page/client/index")
-  index() {
+  index(@Param('pageId') pageId: string) {
     let viewData = [];
     viewData['title'] = 'Home Page - Facebook Client Page';
+    viewData['pageId'] = pageId;
     return {
       viewData: viewData
     };

@@ -25,6 +25,25 @@
     {{#each viewData.messages}}
     <!-- Message. Default to the left -->
     {{#when this.from.name 'eq' ../viewData.senders.0.name}}
+    {{#if this.attachments}}
+    <div class="direct-chat-msg">
+      <div class="direct-chat-infos clearfix">
+        <span class="direct-chat-name float-left">{{this.from.name}}</span>
+        <span class="direct-chat-timestamp float-right">{{formatDate this.created_time}}</span>
+      </div>
+      <!-- /.direct-chat-infos -->
+      <img class="direct-chat-img"
+        src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+        alt="message user image">
+
+      <!-- /.direct-chat-img -->
+      <div class="direct-chat-text">
+        <img src="{{this.attachments.data.0.image_data.preview_url}}" alt="upload Image"
+          style="width: 380px; height: 200px;" />
+      </div>
+      <!-- /.direct-chat-text -->
+    </div>
+    {{else}}
     <div class="direct-chat-msg">
       <div class="direct-chat-infos clearfix">
         <span class="direct-chat-name float-left">{{this.from.name}}</span>
@@ -40,9 +59,28 @@
       </div>
       <!-- /.direct-chat-text -->
     </div>
+    {{/if}}
     {{/when}}
-     <!-- Message. Default to the right -->
+    <!-- Message. Default to the right -->
     {{#when this.from.name 'eq' ../viewData.senders.1.name}}
+    {{#if this.attachments}}
+    <div class="direct-chat-msg right">
+      <div class="direct-chat-infos clearfix">
+        <span class="direct-chat-name float-right">{{this.from.name}}</span>
+        <span class="direct-chat-timestamp float-left">{{formatDate this.created_time}}</span>
+      </div>
+      <!-- /.direct-chat-infos -->
+      <img class="direct-chat-img"
+        src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+        alt="message user image">
+      <!-- /.direct-chat-img -->
+      <div class="direct-chat-text">
+        <img src="{{this.attachments.data.0.image_data.preview_url}}" alt="upload Image"
+          style="width: 380px; height: 200px;" />
+      </div>
+      <!-- /.direct-chat-text -->
+    </div>
+    {{else}}
     <div class="direct-chat-msg right">
       <div class="direct-chat-infos clearfix">
         <span class="direct-chat-name float-right">{{this.from.name}}</span>
@@ -58,6 +96,7 @@
       </div>
       <!-- /.direct-chat-text -->
     </div>
+    {{/if}}
     {{/when}}
     {{/each}}
   </div>
@@ -106,7 +145,7 @@
               {{this.messages.data.0.message}}
             </span>
           </div>
-        </a>
+        </a> 
       </li>
       {{/each}}
       <!-- End Contact Item -->
@@ -120,20 +159,41 @@
 {{#if viewData.conversationId }}
 <!-- /.card-body -->
 <div class="card-footer">
-  <form action="/admin/conversations/send/{{viewData.senders.0.id}}" method="POST">
+  <form action="/admin/conversations/send/{{viewData.senders.0.id}}" method="POST" enctype="multipart/form-data">
     <div class="input-group">
       <input type="text" name="message" placeholder="Type Message ..." class="form-control">
       <span class="input-group-append">
         <input type="hidden" id="currentConversation" name="currentConversation" value={{viewData.conversationId}}
           class="form-control">
+        <div class="custom-file">
+          <input id="inputFile1" class="custom-file-input" type="file" name="fileUpload">
+          <label id="file1" class="custom-file-label" for="exampleInputFile">FileName....</label>
+        </div>
         <button type="submit" class="btn btn-warning">Send</button>
       </span>
+    </div>
+    <div class="form-group">
+      <img id="filePreview" src="" alt="File Preview" style="display: none; width: 100px; height: 100px;">
     </div>
   </form>
 </div>
 {{/if}}
 <!-- /.card-footer-->
 </div>
+<script>
+  document.getElementById('inputFile1').addEventListener('change', function () {
+    var fileName = this.files[0].name;
+    document.getElementById('file1').textContent = fileName;
 
+    if (this.files[0].type.match(/image.*/)) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById('filePreview').src = e.target.result;
+        document.getElementById('filePreview').style.display = 'block';
+      }
+      reader.readAsDataURL(this.files[0]);
+    }
+  });
+</script>
 {{/inline}}
 {{/adminLayoutManagement}}

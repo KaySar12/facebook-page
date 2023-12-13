@@ -18,7 +18,7 @@ export class AdminCommentController {
         const user = req.session.passport.user.user
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin - Manage Comment';
-        viewData['userName'] = `${user?.firstName} ${user?.lastName}`
+        viewData['userName'] = `${user.displayName}`;
         const getPages = await this.facebookService.getPages(req.user.accessToken);
         viewData['allPages'] = getPages;
         return {
@@ -36,7 +36,7 @@ export class AdminCommentController {
         console.log(response);
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin - Manage Comment';
-        viewData['userName'] = `${user?.firstName} ${user?.lastName}`
+        viewData['userName'] = `${user.displayName}`;
         viewData['postId'] = query.id || '';
         viewData['comments'] = response.data;
         viewData['nextPage'] = response.paging?.cursors?.after || '';

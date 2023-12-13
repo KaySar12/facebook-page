@@ -1,5 +1,4 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common"
-
 @Injectable()
 export class FacebookAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext) {

@@ -22,7 +22,7 @@ export class AdminPostController {
         const user = req.session.passport.user.user
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin -  Manage Post page';
-        viewData['userName'] = `${user?.firstName} ${user?.lastName}`
+        viewData['userName'] = `${user.displayName}`;
         viewData['posts'] = response.data;
         viewData['like_count'] = response.data;
         viewData['attachment_count'] = response.data;
@@ -103,8 +103,10 @@ export class AdminPostController {
     @Get('/:id')
     @Render('page/admin/posts/edit')
     async editPostView(@Param('id') id: string, @Req() req) {
+        const user = req.session.passport.user.user
         const viewData = [];
         viewData['title'] = 'Admin Page - Edit Post - Facebook Page';
+        viewData['userName'] = `${user.displayName}`;
         viewData['post'] = await this.facebookService.getPostbyId(id);
         const getPages = await this.facebookService.getPages(req.user.accessToken);
         viewData['allPages'] = getPages;

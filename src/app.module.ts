@@ -18,11 +18,10 @@ import { CloudinaryService } from './cloudinary/cloudinary.service';
   imports: [PassportModule.register({ session: true }),
     HttpModule,
     FacebookModule,
-    TypeOrmModule.forRoot(typeOrmConfig),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: `.env.${process.env.NODE_ENV}`,
-    }), AdminModule,UserModule, CloudinaryModule],
+  TypeOrmModule.forRoot(typeOrmConfig),
+  ConfigModule.forRoot({
+    isGlobal: true
+  }), AdminModule, UserModule, CloudinaryModule],
   controllers: [AppController],
   providers: [AppService, FacebookService, CloudinaryService],
   exports: [FacebookService],

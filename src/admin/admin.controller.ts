@@ -41,7 +41,8 @@ export class AdminController {
     @Render('page/admin/index')
     async index(@Req() req: any, @Res() res) {
         console.log(req.session.passport.user.user)
-        const currentPageId = req.session.passport.user.currentSelectPage ;
+        const currentPageId = req.session.passport.user.currentSelectPage;
+        console.log(` Current Page ID:${currentPageId}`)
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin - Manage Home Page';
 
@@ -50,13 +51,6 @@ export class AdminController {
             const checkExist = await this.userService.checkExist(userData.user.email);
             const userId = userData.user.id;
             const ownerId = '1425721644676951';
-            if (userId === ownerId) {
-                const currentPageAccessToken = this.facebookService.getCurrentPageAccessToken()
-                const checkToken = await this.facebookService.checkTokenData(currentPageAccessToken, userData.accessToken);
-                if (!currentPageAccessToken || !checkToken) {
-                    await this.renewPageAccessToken(req.user.accessToken, currentPageId);
-                }
-            }
             if (!checkExist) {
                 console.log(`New User Detected Id:${userId}`);
                 const createUser = {
@@ -68,10 +62,22 @@ export class AdminController {
                 viewData['userName'] = `${createUser.firstName} ${createUser.lastName}`;
                 await this.userService.create(createUser)
             }
+            const getPages = await this.facebookService.getPages(userData.accessToken);
+            if (!currentPageId) {
+                this.facebookService.setCurrentPageId(getPages.data[0].id);
+                console.log(`set pageId to:${getPages.data[0].id}`);
+                req.session.passport.user.currentSelectPage = this.facebookService.getCurrentPageId();
+            }
+            if (userId === ownerId) {
+                const currentPageAccessToken = this.facebookService.getCurrentPageAccessToken()
+                const checkToken = await this.facebookService.checkTokenData(currentPageAccessToken, userData.accessToken);
+                if (!currentPageAccessToken || !checkToken) {
+                    await this.renewPageAccessToken(req.user.accessToken, this.facebookService.getCurrentPageId());
+                }
+            }
             const pageDetail = await this.facebookService.getPageDetail();
             viewData['page'] = pageDetail;
-            const getPages = await this.facebookService.getPages(userData.accessToken);
-            viewData['pageId'] =  this.facebookService.getCurrentPageId();
+            viewData['pageId'] = this.facebookService.getCurrentPageId();
             viewData['allPages'] = getPages;
             viewData['userName'] = `${checkExist.firstName} ${checkExist.lastName}`;
         }
@@ -80,6 +86,7 @@ export class AdminController {
         };
     }
     async renewPageAccessToken(ownerAccessToken: string, pageId?: string) {
+
         const longLiveToken = await this.facebookService.getUserLongLivesAccessToken(ownerAccessToken);
         const pageAccessToken = await this.facebookService.getPageAccessTokenById(longLiveToken, pageId);
         this.facebookService.setCurrentPageAccessToken(pageAccessToken);
@@ -114,7 +121,7 @@ export class AdminController {
         viewData['description'] = response.about || 'Unavailable';
         const getPages = await this.facebookService.getPages(req.user.accessToken);
         viewData['allPages'] = getPages;
-        viewData['pageId'] =  this.facebookService.getCurrentPageId() || '179668665228573';
+        viewData['pageId'] = this.facebookService.getCurrentPageId() || '179668665228573';
         viewData['userName'] = `${user?.firstName} ${user?.lastName}`
         return {
             viewData: viewData,
@@ -123,7 +130,6 @@ export class AdminController {
     @Get('/testApi')
     @UseGuards(FacebookAuthGuard)
     async testAPI(@Request() req: any) {
-        console.log(req.session.passport.user.user)
-        // return await this.facebookService.getPageAccessTokenById(req.user.accessToken, '186204747910154');
+        console.log(req.session.passport.user.user);
     }
 }
