@@ -9,6 +9,7 @@ import * as hbsUtils from 'hbs-utils';
 import { format } from 'date-fns';
 import * as session from "express-session"
 import * as passport from "passport"
+const cookieParser = require('cookie-parser');
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(
     AppModule
@@ -37,8 +38,10 @@ async function bootstrap() {
       name: 'acc-facebook-session',
       cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
     }),)
+    
   app.use(passport.initialize())
   app.use(passport.session())
+  app.use(cookieParser());
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   hbs.registerPartials(join(__dirname, '..', 'views/layouts'));
@@ -85,6 +88,9 @@ async function bootstrap() {
   });
   hbs.registerHelper("first_element", function (data: any[]) {
     return data[0];
+  });
+  hbs.registerHelper('vue-js', function (options) {
+    return options.fn();
   });
   app.setViewEngine('hbs');
   const port = 8000

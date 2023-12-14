@@ -54,6 +54,14 @@ export class FacebookController {
     async getPageFeed() {
         return await this.facebookService.getPagePost();
     }
+    @Get('/page/feed/:next')
+    async getPageFeedNext(@Param('next') next: string) {
+        return await this.facebookService.getNextPagePost(next);
+    }
+    @Get('/page/feed/:prev')
+    async getPageFeedPrev(@Param('prev') prev: string) {
+        return await this.facebookService.getPrevPagePost(prev);
+    }
     @Post('/page/comment/:postId')
     async postComment(@Param('postId') postId: string, @Body() message: string) {
         return await this.facebookService.postComment(postId, message);
@@ -62,8 +70,9 @@ export class FacebookController {
     async deleteComment(@Param('commentId') commentId: string) {
         return await this.facebookService.deleteComment(commentId);
     }
-    @Delete('/page/post/:postId')
+    @Get('/page/post/:postId')
     async deletePost(@Param('postId') postId: string) {
+        console.log(`delete post ${postId}`)
         return await this.facebookService.deletePost(postId);
     }
     @Post('/page/:post/update')

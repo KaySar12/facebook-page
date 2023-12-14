@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/css/testing.css">
+    <title> Datatable Realtime </title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <h2 class="text-center">
+                Realtime Data Table
+            </h2>
+            <div class="col-md-7">
+
+                <table id="realtime" class="display" width="100%">
+                    <thead>
+                        <tr>
+                            <th>created_time</th>
+                            <th>from</th>
+                            <th>full_picture</th>
+                            <th>id</th>
+                            <th>message</th>
+                            <th>permalink_url</th>
+                            <th>status_type</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>created_time</th>
+                            <th>from</th>
+                            <th>full_picture</th>
+                            <th>id</th>
+                            <th>message</th>
+                            <th>permalink_url</th>
+                            <th>status_type</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.2/axios.js"></script>
+    <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.15/api/row().show().js"></script>
+    <script src="/build/js/facebook-post/main.js"></script>
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+</body>
+
+</html>

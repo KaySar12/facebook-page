@@ -13,11 +13,13 @@ import { PassportModule } from '@nestjs/passport';
 import { UserModule } from './auth/user.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { CloudinaryService } from './cloudinary/cloudinary.service';
+import { TikTokModule } from './tiktok/tiktok.module';
 @Global()
 @Module({
   imports: [PassportModule.register({ session: true }),
     HttpModule,
     FacebookModule,
+    TikTokModule,
   TypeOrmModule.forRoot(typeOrmConfig),
   ConfigModule.forRoot({
     isGlobal: true

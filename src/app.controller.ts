@@ -18,6 +18,25 @@ export class AppController {
       viewData: viewData
     };
   }
+  @Get("/testing/postData")
+  @Render("page/testing/datatable/index")
+  testing() {
+    const viewData = [];
+    viewData['title'] = 'testing Datatable'
+    return {
+      viewData: viewData
+    }
+  }
+  @Get("/testing/chat")
+  @Render("page/testing/chat/index")
+  testingchat() {
+    const viewData = [];
+    viewData['title'] = 'testing chat'
+    return {
+      viewData: viewData
+    }
+  }
+
   @Get("/error")
   @Render("page/error/index")
   error() {
