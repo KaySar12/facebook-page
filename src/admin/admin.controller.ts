@@ -1,4 +1,5 @@
-import { UseGuards, Controller, Get, Request, Render, Req, Res, HttpStatus, ForbiddenException, NotFoundException, Param } from "@nestjs/common";
+import { UseGuards, Controller, Get, Request, Render, Req, Res, HttpStatus, Param } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { AuthGuard, } from "@nestjs/passport";
 import { UserService } from "src/auth/user.service";
 import { FacebookAuthGuard } from "src/facebook/facebook.guard";
@@ -8,7 +9,8 @@ import { LocalAuthGuard } from "src/facebook/local-auth.guard";
 export class AdminController {
     constructor(
         private readonly userService: UserService,
-        private readonly facebookService: FacebookService) {
+        private readonly facebookService: FacebookService,
+        private readonly configService: ConfigService) {
     }
 
     @Get('/login')
@@ -50,7 +52,7 @@ export class AdminController {
             const userData = req.user;
             const checkExist = await this.userService.checkExist(userData.user.email);
             const userId = userData.user.id;
-            const ownerId = '1425721644676951';
+            const ownerId = this.configService.get('owner_id');
             if (!checkExist) {
                 console.log(`New User Detected Id:${userId}`);
                 const createUser = {
