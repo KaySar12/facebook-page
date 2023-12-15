@@ -1,7 +1,8 @@
+const host = 'http://localhost:8000';
 const deletePost = async (id) => {
   console.log(`delete post ${id.toString()}`);
   try {
-    const res = await fetch(`http://localhost:8000/facebook/page/post/${id}`, {
+    const res = await fetch(`${host}/facebook/page/post/${id}`, {
       method: 'GET',
     });
     const rs = await res.json();
@@ -13,7 +14,7 @@ const deletePost = async (id) => {
 };
 const getPosts = async () => {
   try {
-    const res = await fetch('http://localhost:8000/facebook/page/feed', {
+    const res = await fetch(`${host}/facebook/page/feed`, {
       method: 'GET',
       redirect: 'follow',
     });
@@ -27,13 +28,10 @@ const getPosts = async () => {
 };
 const getPostsNext = async (next) => {
   try {
-    const res = await fetch(
-      `http://localhost:8000/facebook/page/feed/${next}`,
-      {
-        method: 'GET',
-        redirect: 'follow',
-      },
-    );
+    const res = await fetch(`${host}/facebook/page/feed/${next}`, {
+      method: 'GET',
+      redirect: 'follow',
+    });
     const rs = await res.json();
 
     return rs;
@@ -44,13 +42,10 @@ const getPostsNext = async (next) => {
 };
 const getPostsPrev = async (prev) => {
   try {
-    const res = await fetch(
-      `http://localhost:8000/facebook/page/feed/${prev}`,
-      {
-        method: 'GET',
-        redirect: 'follow',
-      },
-    );
+    const res = await fetch(`${host}/facebook/page/feed/${prev}`, {
+      method: 'GET',
+      redirect: 'follow',
+    });
     const rs = await res.json();
 
     return rs;
