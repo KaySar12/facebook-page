@@ -1,0 +1,157 @@
+{{#> adminLayoutManagement}}
+{{#*inline "content"}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.js"></script>
+<!-- DIRECT CHAT -->
+<div class="card direct-chat direct-chat-warning">
+    <div class="card-header">
+        <h3 class="card-title">Message</h3>
+
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" title="Contacts" data-widget="chat-pane-toggle">
+                <i class="fas fa-comments"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <!-- /.card-header -->
+    <br class="card-body">
+    <!-- Conversations are loaded here -->
+    {{#if viewData.conversationId }}
+    <div id="app">
+        <input type="hidden" id="conversationId" value={{viewData.conversationId}}>
+        {{{{vue-js}}}}
+        <div class="direct-chat-messages">
+            <div v-for="chat in chats" :key="chat.id">
+                <div
+                    :class="{'direct-chat-msg right': chat.from === chat.sender, 'direct-chat-msg': chat.from === chat.receiver}">
+                    <div class="direct-chat-infos clearfix">
+                        <span class="direct-chat-name float-right">{{ chat.from }}</span>
+                        <span class="direct-chat-timestamp float-left">{{ chat.created_time }}</span>
+                    </div>
+                    <!-- /.direct-chat-infos -->
+                    <img class="direct-chat-img"
+                        src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                        alt="message user image">
+                    <!-- /.direct-chat-img -->
+                    <div class="direct-chat-text" :class="{ 'right': chat.from === chat.sender }">
+                        <template v-if="chat.attachments && chat.attachments.data[0].image_data.preview_url">
+                            <img :src="chat.attachments.data[0].image_data.preview_url" alt="upload Image"
+                                style="width: 380px; height: 200px;">
+                        </template>
+                        <template v-if="chat.sticker && chat.sticker">
+                            <img :src="chat.sticker" alt="upload Image" style="width: 180px; height: 100x;">
+                        </template>
+                        {{ chat.message }}
+                    </div>
+                    <!-- /.direct-chat-text -->
+                </div>
+            </div>
+        </div>
+    </div>
+    {{{{/vue-js}}}}
+    {{else}}
+
+    <ul class="contacts-list">
+        {{#each viewData.conversations}}
+        <li>
+            <a href="/admin/conversations/message?conversationId={{this.id}}">
+                <img class="contacts-list-img"
+                    src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                    alt="User Avatar">
+                <div class="contacts-list-info">
+                    <span class="contacts-list-name">
+                        {{this.senders.data.0.name}}
+                        <small class="contacts-list-date float-right">{{formatDate this.updated_time}}</small>
+                    </span>
+                    <span class="contacts-list-msg">
+                        {{this.messages.data.0.message}}
+                    </span>
+                </div>
+            </a>
+        </li>
+        {{/each}}
+        <!-- End Contact Item -->
+        <!-- End Contact Item -->
+    </ul>
+    <!-- /.contacts-list -->
+    {{/if}}
+    <!--/.direct-chat-messages-->
+
+    <!-- Contacts are loaded here -->
+    <div class="direct-chat-contacts">
+        <ul class="contacts-list">
+            {{#each viewData.conversations}}
+            <li>
+                <a href="/admin/conversations/message?conversationId={{this.id}}">
+                    <img class="contacts-list-img"
+                        src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                        alt="User Avatar">
+                    <div class="contacts-list-info">
+                        <span class="contacts-list-name">
+                            {{this.senders.data.0.name}}
+                            <small class="contacts-list-date float-right">{{formatDate this.updated_time}}</small>
+                        </span>
+                        <span class="contacts-list-msg">
+                            {{this.messages.data.0.message}}
+                        </span>
+                    </div>
+                </a>
+            </li>
+            {{/each}}
+            <!-- End Contact Item -->
+            <!-- End Contact Item -->
+        </ul>
+        <!-- /.contacts-list -->
+    </div>
+
+    <!-- /.direct-chat-pane -->
+</div>
+{{#if viewData.conversationId }}
+<!-- /.card-body -->
+<div class="card-footer">
+    <form action="/admin/conversations/send/{{viewData.senders.0.id}}" method="POST" enctype="multipart/form-data">
+        <div class="input-group">
+            <input type="text" name="message" placeholder="Type Message ..." class="form-control">
+            <span class="input-group-append">
+                <input type="hidden" id="currentConversation" name="currentConversation"
+                    value={{viewData.conversationId}} class="form-control">
+                <div class="custom-file">
+                    <input id="inputFile1" class="custom-file-input" type="file" name="fileUpload">
+                    <label id="file1" class="custom-file-label" for="exampleInputFile">FileName....</label>
+                </div>
+                <button type="submit" class="btn btn-warning">Send</button>
+            </span>
+        </div>
+        <div class="form-group">
+            <img id="filePreview" src="" alt="File Preview" style="display: none; width: 100px; height: 100px;">
+        </div>
+    </form>
+</div>
+{{/if}}
+<!-- /.card-footer-->
+</div>
+<script>
+    document.getElementById('inputFile1').addEventListener('change', function () {
+        var fileName = this.files[0].name;
+        document.getElementById('file1').textContent = fileName;
+
+        if (this.files[0].type.match(/image.*/)) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('filePreview').src = e.target.result;
+                document.getElementById('filePreview').style.display = 'block';
+            }
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.2/axios.js"></script>
+<script src="https://js.pusher.com/4.1/pusher.min.js"></script>
+<script type="module" src="/build/js/chat/main.js"></script>
+{{/inline}}
+{{/adminLayoutManagement}}

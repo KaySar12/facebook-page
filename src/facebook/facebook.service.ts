@@ -161,8 +161,8 @@ export class FacebookService {
         }
     }
     async getPageConversations(): Promise<any> {
-        const accessToken = this.pageAccessToken;
-        const pageId = this.getCurrentPageId() || '179668665228573';
+        const accessToken = this.pageAccessToken || this.configService.get('default_access_token');
+        const pageId = this.getCurrentPageId();
         const options = {
             method: 'GET',
             url: `https://graph.facebook.com/v18.0/${pageId}/conversations?fields=name,id,senders,messages{message,from,to},updated_time`,
@@ -180,10 +180,12 @@ export class FacebookService {
         }
     }
     async getConversationById(conversationId: string) {
-        const accessToken = this.pageAccessToken;
+        const accessToken = this.pageAccessToken || this.configService.get('default_access_token');
+        this.setCurrentPageAccessToken(accessToken);
+        console.log(accessToken);
         const options = {
             method: 'GET',
-            url: `https://graph.facebook.com/v18.0/${conversationId}?fields=name,id,senders,messages{message,from,to,created_time,attachments},updated_time`,
+            url: `https://graph.facebook.com/v18.0/${conversationId}?fields=name,id,senders,messages{message,from,to,created_time,attachments,sticker},updated_time`,
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
                 'Authorization': `Bearer ${accessToken} `
@@ -194,11 +196,11 @@ export class FacebookService {
             //console.log(response.data);
             return response.data;
         } catch (error) {
-            console.error(error);
+            console.error('error at getConversationById');
         }
     }
     async getPagePost() {
-        const access_token = this.pageAccessToken || this.configService.get('default_access_token');;
+        const access_token = this.pageAccessToken || this.configService.get('default_access_token');
         const pageId = this.getCurrentPageId() || '179668665228573';
         const fields = 'id,created_time,message,story,attachments,comments,likes.limit(1).summary(true)'
         const options = {

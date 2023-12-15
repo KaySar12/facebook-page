@@ -36,6 +36,10 @@ export class FacebookController {
     async getPageConversation(): Promise<any> {
         return await this.facebookService.getPageConversations();
     }
+    @Get('/page/conversation/:id')
+    async getConversationbyId(@Param('id') id: any): Promise<any> {
+        return await this.facebookService.getConversationById(id);
+    }
     @Get('/page')
     async getPageDetail() {
         return await this.facebookService.getPageDetail();

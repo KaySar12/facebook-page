@@ -1,17 +1,19 @@
-import { Body, Controller, Get, Param, Post, Query, Render, Req, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Get, HttpStatus, Param, Post, Query, Render, Req, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { query } from "express";
 import { CloudinaryService } from "src/cloudinary/cloudinary.service";
 import { SendMessageDto } from "src/facebook/dto/sendMessage.dto";
 import { FacebookAuthGuard } from "src/facebook/facebook.guard";
 import { FacebookService } from "src/facebook/facebook.service";
+import { ChatService } from "./inprogress/admin.chat.service";
 
 @Controller('/admin/conversations')
 @UseGuards(FacebookAuthGuard)
 export class AdminConversationController {
     constructor(
         private cloudinaryService: CloudinaryService,
-        private readonly facebookService: FacebookService) {
+        private readonly facebookService: FacebookService,
+        private chatService: ChatService) {
     }
     @Get('/data')
     @Render('page/admin/conversation/indexData')
@@ -47,7 +49,7 @@ export class AdminConversationController {
     }
     @Get('/messageData')
     @Render('page/admin/message/index')
-    async getMessagebyId(@Query() query, @Req() req: any) {
+    async getMessagebyIdData(@Query() query, @Req() req: any) {
         const conversationId = query.conversationId;
         const getConversationbyId = await this.facebookService.getConversationById(conversationId);
         const user = req.session.passport.user.user;
@@ -65,8 +67,8 @@ export class AdminConversationController {
         }
     }
     @Get('/message')
-    @Render('page/admin/conversation/index')
-    async getMessagebyIdNew(@Query() query, @Req() req: any) {
+    @Render('page/admin/conversation/indexNew2')
+    async getMessagebyId(@Query() query, @Req() req: any) {
         const viewData = [];
         const getConversations = await this.facebookService.getPageConversations();
         const user = req.session.passport.user.user;
@@ -96,6 +98,7 @@ export class AdminConversationController {
         console.log(body);
         console.log(query);
         console.log(file);
+
         if (!file) {
             const options: SendMessageDto = {
                 recipient: receiver,
@@ -103,6 +106,7 @@ export class AdminConversationController {
                 messaging_type: 'RESPONSE'
             }
             await this.facebookService.sendMessageToUser(options)
+            //if success then  this.chatService.addMessage(data)
             return res.redirect(`/admin/conversations/message?conversationId=${body.currentConversation}`)
         }
         const secureUrl = await this.cloudinaryService
@@ -122,7 +126,7 @@ export class AdminConversationController {
             messaging_type: 'RESPONSE',
             url: secureUrl
         }
-
+        //if success then  this.chatService.addMessage(data)
         await this.facebookService.sendMessageAttachment(options)
         if (body.message) {
             await this.facebookService.sendMessageToUser(options)

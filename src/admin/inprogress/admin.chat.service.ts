@@ -7,13 +7,9 @@ export class ChatService {
 
     addMessage(data) {
         const Pusher = require('pusher');
-        const sentiment = new Sentiment();
-        const sentimentScore = sentiment.analyze(data.message).score;
 
         const chat = {
-            user: data.user,
             message: data.message,
-            sentiment: sentimentScore
         }
 
         const pusher = new Pusher({
