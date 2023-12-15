@@ -141,7 +141,7 @@ export class FacebookService {
         }
     }
     async getPageDetail() {
-        const accessToken = this.getCurrentPageAccessToken() || 'EAAPpVqwgr9cBOZC3c9BaCj1yjE26y3X3Wk1SAn4MZCVGqhdTsuZAycfz3lVlGqAET1q3x8WMm7ZADB7ZAEg1zhq5WzD9DQ4tum1wMM2iUglCNShnrSptAqqKxZAPYJZAeBiMcyaxaXmv7AJknnjZBMDFxFeDNCQtVZCm6A4APA8IeKrXUoCTU8eFSwlBcha1gEpwZD';
+        const accessToken = this.getCurrentPageAccessToken() || this.configService.get('default_access_token');
         const pageId = this.getCurrentPageId() || '179668665228573'
         const fields = 'link,followers_count,fan_count,name,phone,albums{photos{id,link,picture}},about,picture{url,height,width,cache_key,is_silhouette},release_date,location,current_location,general_info,personal_info,engagement,featured_video,emails,posts.limit(10){from,full_picture,icon,id,created_time,likes{id},comments{id},status_type,permalink_url,message}'
         const options = {
@@ -198,7 +198,7 @@ export class FacebookService {
         }
     }
     async getPagePost() {
-        const access_token = this.pageAccessToken || 'EAAPpVqwgr9cBOZC3c9BaCj1yjE26y3X3Wk1SAn4MZCVGqhdTsuZAycfz3lVlGqAET1q3x8WMm7ZADB7ZAEg1zhq5WzD9DQ4tum1wMM2iUglCNShnrSptAqqKxZAPYJZAeBiMcyaxaXmv7AJknnjZBMDFxFeDNCQtVZCm6A4APA8IeKrXUoCTU8eFSwlBcha1gEpwZD';
+        const access_token = this.pageAccessToken || this.configService.get('default_access_token');;
         const pageId = this.getCurrentPageId() || '179668665228573';
         const fields = 'id,created_time,message,story,attachments,comments,likes.limit(1).summary(true)'
         const options = {
@@ -218,7 +218,7 @@ export class FacebookService {
         }
     }
     async getNextPagePost(next: string) {
-        const access_token = this.pageAccessToken || 'EAAPpVqwgr9cBOZC3c9BaCj1yjE26y3X3Wk1SAn4MZCVGqhdTsuZAycfz3lVlGqAET1q3x8WMm7ZADB7ZAEg1zhq5WzD9DQ4tum1wMM2iUglCNShnrSptAqqKxZAPYJZAeBiMcyaxaXmv7AJknnjZBMDFxFeDNCQtVZCm6A4APA8IeKrXUoCTU8eFSwlBcha1gEpwZD';
+        const access_token = this.pageAccessToken || this.configService.get('default_access_token');
         const pageId = this.getCurrentPageId() || '179668665228573';
         const fields = 'id,created_time,message,story,attachments,comments,likes.limit(1).summary(true)'
         const options = {
@@ -239,7 +239,7 @@ export class FacebookService {
         }
     }
     async getPrevPagePost(previous: string) {
-        const access_token = this.pageAccessToken || 'EAAPpVqwgr9cBOZC3c9BaCj1yjE26y3X3Wk1SAn4MZCVGqhdTsuZAycfz3lVlGqAET1q3x8WMm7ZADB7ZAEg1zhq5WzD9DQ4tum1wMM2iUglCNShnrSptAqqKxZAPYJZAeBiMcyaxaXmv7AJknnjZBMDFxFeDNCQtVZCm6A4APA8IeKrXUoCTU8eFSwlBcha1gEpwZD';;
+        const access_token = this.pageAccessToken || this.configService.get('default_access_token');
         const pageId = this.getCurrentPageId() || '179668665228573';
         const fields = 'id,created_time,message,story,attachments,comments,likes.limit(1).summary(true)'
         const options = {
@@ -512,7 +512,7 @@ export class FacebookService {
     }
 
     async deletePost(postId: string) {
-        const access_token = this.pageAccessToken || 'EAAPpVqwgr9cBOwctstmetwbgUL9w58UK8oJRAnGt6NhvmstHTuEKBOiB47ySzudrZCIGND7DVjYFf3ZA8GJS11Vnv6ZCVgG99dV5xRhsXx5bKHoTqiRz6DKC9WC2bkHRR0LxNLEmjHgvLQoDfYs0W09ZCQJird7iLLrPmIZAQnoNN1L0JQwFZBZCOSQJ9QqJoEZD';
+        const access_token = this.pageAccessToken || this.configService.get('default_access_token');;
         console.log(access_token);
         const options = {
             method: 'DELETE',

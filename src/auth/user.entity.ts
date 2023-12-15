@@ -20,13 +20,8 @@ export class User extends BaseEntity {
   userId: string;
   @Column('text')
   email: string;
-
   @Column('text')
-  firstName: string;
-  @Column('text')
-  lastName: string;
-  // @Column('text')
-  // currentSelectPage: string
+  displayName: string;
   @CreateDateColumn()
   createdDate: Date;
   @BeforeInsert()

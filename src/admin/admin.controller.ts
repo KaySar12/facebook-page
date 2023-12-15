@@ -50,19 +50,21 @@ export class AdminController {
 
         if (req.user) {
             const userData = req.user;
+            console.log(userData);
             const checkExist = await this.userService.checkExist(userData.user.email);
             const userId = userData.user.id;
             const ownerId = this.configService.get('owner_id');
             if (!checkExist) {
+                console.log(userData);
                 console.log(`New User Detected Id:${userId}`);
                 const createUser = {
                     userId: userId,
                     email: userData.user.email,
-                    firstName: userData.user?.firstName || '',
-                    lastName: userData.user?.lastName || '',
+                    displayName: userData.user.displayName,
                 }
-                viewData['userName'] = `${createUser.firstName} ${createUser.lastName}`;
+                viewData['userName'] = userData.user.displayName;
                 await this.userService.create(createUser)
+
             }
             const getPages = await this.facebookService.getPages(userData.accessToken);
             if (!currentPageId) {
@@ -81,7 +83,7 @@ export class AdminController {
             viewData['page'] = pageDetail;
             viewData['pageId'] = this.facebookService.getCurrentPageId();
             viewData['allPages'] = getPages;
-            viewData['userName'] = `${checkExist.firstName} ${checkExist.lastName}`;
+            viewData['userName'] = req.user.user.displayName;
         }
         return {
             viewData: viewData,
@@ -124,7 +126,7 @@ export class AdminController {
         const getPages = await this.facebookService.getPages(req.user.accessToken);
         viewData['allPages'] = getPages;
         viewData['pageId'] = this.facebookService.getCurrentPageId() || '179668665228573';
-        viewData['userName'] = `${user?.firstName} ${user?.lastName}`
+        viewData['userName'] = req.user.user.displayName;
         return {
             viewData: viewData,
         };

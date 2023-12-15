@@ -8,8 +8,8 @@ import { FacebookStrategy } from './facebook.strategy';
 import { SessionSerializer } from './facebook-session.serializer';
 
 @Module({
-    imports:[HttpModule,ConfigModule,PassportModule.register({ session: true })],
-    providers:[FacebookService,FacebookStrategy,SessionSerializer],
-    controllers:[FacebookController],
+    imports: [HttpModule, ConfigModule, PassportModule.register({ session: true })],
+    providers: [FacebookService, FacebookStrategy, SessionSerializer],
+    controllers: [FacebookController],
 })
-export class FacebookModule{}
+export class FacebookModule { }

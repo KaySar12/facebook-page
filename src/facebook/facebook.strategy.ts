@@ -7,8 +7,8 @@ import { Profile, Strategy } from 'passport-facebook';
 export class FacebookStrategy extends PassportStrategy(Strategy) {
     constructor(private configService: ConfigService) {
         super({
-            clientID: 1100983394414551,
-            clientSecret: '6d4c80736b6935e9ae26c5a50a484ba0',
+            clientID: process.env.client_id,
+            clientSecret: process.env.client_secret,
             callbackURL: 'https://violently-distinct-trout.ngrok-free.app/admin/action/redirect',
             scope: 'email',
             profileFields: ['id', 'displayName', 'photos', 'email'],
@@ -25,8 +25,6 @@ export class FacebookStrategy extends PassportStrategy(Strategy) {
         console.log(this.configService.get('client_id'));
         const user = {
             email: emails[0].value,
-            firstName: name.givenName,
-            lastName: name.familyName,
             id: id,
             photos: photos,
             displayName: displayName,

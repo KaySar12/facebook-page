@@ -10,8 +10,12 @@ export class UserService {
   ) { }
 
   async create(jsonData: any) {
-    const user = this.userRepository.create(jsonData);
-    return await this.userRepository.save(user);
+    try {
+      const user = this.userRepository.create(jsonData);
+      return await this.userRepository.save(user);
+    } catch (error) {
+      console.log('create user fail');
+    }
   }
   async checkExist(email: string): Promise<any> {
     const checkExist = await this.userRepository.findOne({ where: { email: email } });
