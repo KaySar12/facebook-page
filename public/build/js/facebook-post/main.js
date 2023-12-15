@@ -7,35 +7,57 @@ const deletePost = async (id) => {
     const rs = await res.json();
     console.log(rs);
   } catch (err) {
+    window.alert('Error at delete post');
     console(err);
   }
 };
 const getPosts = async () => {
-  const res = await fetch('http://localhost:8000/facebook/page/feed', {
-    method: 'GET',
-    redirect: 'follow',
-  });
-  const rs = await res.json();
-  console.log(rs);
-  return rs;
+  try {
+    const res = await fetch('http://localhost:8000/facebook/page/feed', {
+      method: 'GET',
+      redirect: 'follow',
+    });
+    const rs = await res.json();
+    console.log(rs);
+    return rs;
+  } catch (err) {
+    window.alert('Error at getPosts post');
+    console(err);
+  }
 };
 const getPostsNext = async (next) => {
-  const res = await fetch(`http://localhost:8000/facebook/page/feed/${next}`, {
-    method: 'GET',
-    redirect: 'follow',
-  });
-  const rs = await res.json();
+  try {
+    const res = await fetch(
+      `http://localhost:8000/facebook/page/feed/${next}`,
+      {
+        method: 'GET',
+        redirect: 'follow',
+      },
+    );
+    const rs = await res.json();
 
-  return rs;
+    return rs;
+  } catch (err) {
+    window.alert('Error at getPosts next post');
+    console(err);
+  }
 };
 const getPostsPrev = async (prev) => {
-  const res = await fetch(`http://localhost:8000/facebook/page/feed/${prev}`, {
-    method: 'GET',
-    redirect: 'follow',
-  });
-  const rs = await res.json();
+  try {
+    const res = await fetch(
+      `http://localhost:8000/facebook/page/feed/${prev}`,
+      {
+        method: 'GET',
+        redirect: 'follow',
+      },
+    );
+    const rs = await res.json();
 
-  return rs;
+    return rs;
+  } catch (err) {
+    window.alert('Error at getPosts previous post');
+    console(err);
+  }
 };
 
 const app = {
@@ -84,10 +106,10 @@ const app = {
       ],
       drawCallback: async function () {
         const api = this.api();
+        console.log(api);
         $('.paginate_button.next', this.api().table().container()).on(
           'click',
           async function () {
-            alert('next page');
             const nextData = await getPostsNext(rs.paging.cursors.after);
             api.clear().rows.add(nextData.data).draw();
           },
@@ -95,7 +117,6 @@ const app = {
         $('.paginate_button.previous', this.api().table().container()).on(
           'click',
           async function () {
-            alert('prev page');
             const prevPage = await getPostsPrev(rs.paging.cursors.before);
             api.clear().rows.add(prevPage.data).draw();
           },
