@@ -93,7 +93,7 @@ async function bootstrap() {
     return options.fn();
   });
   app.setViewEngine('hbs');
-  const port = 8000
+  const port = process.env.PORT || 8000;
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
   await app.listen(port);
