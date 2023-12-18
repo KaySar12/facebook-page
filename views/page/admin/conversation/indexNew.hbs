@@ -1,6 +1,5 @@
 {{#> adminLayoutManagement}}
 {{#*inline "content"}}
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.js"></script>
 <!-- DIRECT CHAT -->
 <div class="card direct-chat direct-chat-warning">
@@ -24,74 +23,78 @@
     <!-- Conversations are loaded here -->
     {{#if viewData.conversationId }}
     <div id="app">
-        <div class="direct-chat-messages" v-for="chat in chats" id="chat-box" value={{viewData.conversationId}}>
-            {{{{vue-js}}}}
-            <div v-if="chat.from == chat.sender && chat.attachments " class="direct-chat-msg right">
-                <div class="direct-chat-infos clearfix">
-                    <span class="direct-chat-name float-right">{{chat.from}}</span>
-                    <span class="direct-chat-timestamp float-left">{{chat.created_time}}</span>
+        <input type="hidden" id="conversationId" value={{viewData.conversationId}}>
+        {{{{loadChat}}}}
+        <div class="direct-chat-messages">
+            <div v-for="chat in chats" :key="chat.id">
+                <div
+                    :class="{'direct-chat-msg right': chat.from === chat.sender, 'direct-chat-msg': chat.from === chat.receiver}">
+                    <div class="direct-chat-infos clearfix">
+                        <span class="direct-chat-name float-right">{{ chat.from }}</span>
+                        <span class="direct-chat-timestamp float-left">{{ chat.created_time }}</span>
+                    </div>
+                    <!-- /.direct-chat-infos -->
+                    <img class="direct-chat-img"
+                        src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                        alt="message user image">
+                    <!-- /.direct-chat-img -->
+                    <div class="direct-chat-text" :class="{ 'right': chat.from === chat.sender }">
+                        <template v-if="chat.attachments && isImageFile(chat.attachments.data[0].mime_type)">
+                            <!-- Display image attachment -->
+                            <img :src="chat.attachments.data[0].image_data.preview_url" alt="upload Image"
+                                style="width: 380px; height: 200px;" />
+                        </template>
+                        <template v-else-if="chat.attachments && isTextFile(chat.attachments.data[0].mime_type)">
+                            <!-- Display PDF attachment -->
+                            <a :href="chat.attachments.data[0].file_url"
+                                target="_blank">{{chat.attachments.data[0].name}}</a>
+                        </template>
+                        <template v-else-if="chat.attachments && isVideoFile(chat.attachments.data[0].mime_type)">
+                            <!-- Display video attachment -->
+                            <video controls style="width: 380px; height: 200px;">
+                                <source :src="chat.attachments.data[0].video_data.url" type="video/mp4" />
+                                <!-- Add additional source elements for different video formats -->
+                                <source :src="chat.attachments.data[0].video_data.url" type="video/webm" />
+                                <source :src="chat.attachments.data[0].video_data.url" type="video/ogg" />
+                                <!-- Add more formats if needed -->
+                                Your browser does not support the video tag.
+                            </video>
+                        </template>
+                        <template v-if="isLink(chat.message)">
+                            <!-- If the message looks like a link, render it as a hyperlink -->
+                            <a :href="chat.message" target="_blank">{{ chat.message }}</a>
+                        </template>
+                        <template v-if="chat.sticker">
+                            <img :src="chat.sticker" alt="upload Image" style="width: 80px; height: 80x;">
+                        </template>
+                        <template v-if="!isLink(chat.message)">
+                            <!-- Render the message only if it's not a link -->
+                            {{ chat.message }}
+                        </template>
+                    </div>
+                    <!-- /.direct-chat-text -->
                 </div>
-                <!-- /.direct-chat-infos -->
-                <img class="direct-chat-img"
-                    src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-                    alt="message user image">
-                <!-- /.direct-chat-img -->
-                <div class="direct-chat-text">
-                    <img :src="chat.attachments.data[0].image_data.preview_url" alt="upload Image"
-                        style="width: 380px; height: 200px;">
-                </div>
-                <!-- /.direct-chat-text -->
             </div>
-            <div v-if="chat.from == chat.sender" class="direct-chat-msg right">
-                <div class="direct-chat-infos clearfix">
-                    <span class="direct-chat-name float-right">{{chat.from}}</span>
-                    <span class="direct-chat-timestamp float-left">{{chat.created_time}}</span>
-                </div>
-                <!-- /.direct-chat-infos -->
-                <img class="direct-chat-img"
-                    src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-                    alt="message user image">
-                <!-- /.direct-chat-img -->
-                <div class="direct-chat-text">
-                    {{chat.message}}
-                </div>
-                <!-- /.direct-chat-text -->
-            </div>
-            <div v-if="chat.from == chat.receiver && chat.attachments" class="direct-chat-msg">
-                <div class="direct-chat-infos clearfix">
-                    <span class="direct-chat-name float-left">{{chat.from}}</span>
-                    <span class="direct-chat-timestamp float-right">{{chat.created_time}}</span>
-                </div>
-                <!-- /.direct-chat-infos -->
-                <img class="direct-chat-img"
-                    src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-                    alt="message user image">
-                <!-- /.direct-chat-img -->
-                <div class="direct-chat-text">
-                    <img :src="chat.attachments.data[0].image_data.preview_url" alt="upload Image"
-                        style="width: 380px; height: 200px;">
-                </div>
-                <!-- /.direct-chat-text -->
-            </div>
-            <div v-if="chat.from == chat.receiver" class="direct-chat-msg">
-                <div class="direct-chat-infos clearfix">
-                    <span class="direct-chat-name float-left">{{chat.from}}</span>
-                    <span class="direct-chat-timestamp float-right">{{chat.created_time}}</span>
-                </div>
-                <!-- /.direct-chat-infos -->
-                <img class="direct-chat-img"
-                    src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-                    alt="message user image">
-                <!-- /.direct-chat-img -->
-                <div class="direct-chat-text">
-                    {{chat.message}}
-                </div>
-                <!-- /.direct-chat-text -->
-            </div>
-            {{{{/vue-js}}}}
         </div>
+        <br class="card-body">
+        <!-- <div class="input-group">
+            <input v-model="message" type="text" placeholder="Type Message ..." class="form-control">
+            <span class="input-group-append">
+                <div class="custom-file">
+                    <input @change="handleFileUpload" class="custom-file-input" type="file" name="fileUpload">
+                    <label class="custom-file-label" for="exampleInputFile">{{ fileName }}</label>
+                </div>
+                <button @click="postMessages" class="btn btn-warning">Send</button>
+            </span>
+        </div>
+        <div class="form-group">
+            <img id="filePreview" :src="filePreviewSrc" alt="File Preview"
+                style="display: none; width: 100px; height: 100px;">
+        </div>  -->
     </div>
+    {{{{/loadChat}}}}
     {{else}}
+
     <ul class="contacts-list">
         {{#each viewData.conversations}}
         <li>
@@ -152,11 +155,9 @@
 <div class="card-footer">
     <form action="/admin/conversations/send/{{viewData.senders.0.id}}" method="POST" enctype="multipart/form-data">
         <div class="input-group">
-            {{{{vue-js}}}}
-            <input placeholder="Type a message here then hit ENTER" @Keyup.enter="postMessages" type="text"
-                name="message" placeholder="Type Message ..." class="form-control">
-            {{{{/vue-js}}}}
+            <input type="text" name="message" placeholder="Type Message ..." class="form-control">
             <span class="input-group-append">
+                <input type="hidden" id="receiver" name="receiver" value={{viewData.senders.0.id}}class="form-control">
                 <input type="hidden" id="currentConversation" name="currentConversation"
                     value={{viewData.conversationId}} class="form-control">
                 <div class="custom-file">
@@ -169,8 +170,17 @@
         <div class="form-group">
             <img id="filePreview" src="" alt="File Preview" style="display: none; width: 100px; height: 100px;">
         </div>
-
     </form>
+
+    <input type="hidden" id="receiver" name="receiver" value={{viewData.senders.0.id}} class="form-control">
+    <input type="hidden" id="currentConversation" name="currentConversation" value={{viewData.conversationId}}
+        class="form-control">
+
+
+
+
+
+
 </div>
 {{/if}}
 <!-- /.card-footer-->
@@ -189,9 +199,10 @@
             reader.readAsDataURL(this.files[0]);
         }
     });
+
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.2/axios.js"></script>
 <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
-<script src="/build/js/chat/main.js"></script>
+<script type="module" src="/build/js/chat/main.js"></script>
 {{/inline}}
 {{/adminLayoutManagement}}

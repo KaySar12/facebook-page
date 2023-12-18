@@ -335,7 +335,7 @@ export class FacebookService {
             console.error(error.response.data);
         }
     }
-    async sendMessageAttachment(params: any) {
+    async sendMessageAttachmentImage(params: any) {
         const access_token = this.pageAccessToken;
         const pageId = this.getCurrentPageId() || '179668665228573';
         const options = {
@@ -351,6 +351,72 @@ export class FacebookService {
                 message: {
                     'attachment': {
                         "type": "image",
+                        "payload": {
+                            "url": params.url,
+                            "is_reusable": true
+                        }
+                    }
+                },
+            },
+        }
+        try {
+            //console.log(options.data);
+            const response = await axios.request(options);
+            //  console.log(response.data);
+            return response.data;
+        } catch (error) {
+            console.error(error.response.data);
+        }
+    }
+    async sendMessageAttachmentVideo(params: any) {
+        const access_token = this.pageAccessToken;
+        const pageId = this.getCurrentPageId() || '179668665228573';
+        const options = {
+            method: 'POST',
+            url: `https://graph.facebook.com/v18.0/${pageId}/messages`,
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': `Bearer ${access_token}`,
+            },
+            data: {
+                recipient: { 'id': params.recipient },
+                messaging_type: params.messaging_type,
+                message: {
+                    'attachment': {
+                        "type": "video",
+                        "payload": {
+                            "url": params.url,
+                            "is_reusable": true
+                        }
+                    }
+                },
+            },
+        }
+        try {
+            //console.log(options.data);
+            const response = await axios.request(options);
+            //  console.log(response.data);
+            return response.data;
+        } catch (error) {
+            console.error(error.response.data);
+        }
+    }
+    async sendMessageAttachmentFile(params: any) {
+        const access_token = this.pageAccessToken;
+        const pageId = this.getCurrentPageId() || '179668665228573';
+        const options = {
+            method: 'POST',
+            url: `https://graph.facebook.com/v18.0/${pageId}/messages`,
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': `Bearer ${access_token}`,
+            },
+            data: {
+                recipient: { 'id': params.recipient },
+                messaging_type: params.messaging_type,
+                message: {
+                    'attachment': {
+                        "type": "file",
                         "payload": {
                             "url": params.url,
                             "is_reusable": true

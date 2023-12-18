@@ -6,7 +6,8 @@ export class ChatController {
     constructor(private chatService: ChatService) { }
     @Post()
     postMessage(@Res() res, @Body() data) {
+        console.log('new Message Detected !!')
         this.chatService.addMessage(data)
-        res.status(HttpStatus.OK).send("Comment posted successfully")
+        res.status(HttpStatus.OK).send("Message posted successfully")
     }
 }

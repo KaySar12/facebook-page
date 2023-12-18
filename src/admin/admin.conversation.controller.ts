@@ -67,7 +67,7 @@ export class AdminConversationController {
         }
     }
     @Get('/message')
-    @Render('page/admin/conversation/indexNew2')
+    @Render('page/admin/conversation/indexNew')
     async getMessagebyId(@Query() query, @Req() req: any) {
         const viewData = [];
         const getConversations = await this.facebookService.getPageConversations();
@@ -98,7 +98,7 @@ export class AdminConversationController {
         console.log(body);
         console.log(query);
         console.log(file);
-
+        let secureUrl = '';
         if (!file) {
             const options: SendMessageDto = {
                 recipient: receiver,
@@ -108,29 +108,77 @@ export class AdminConversationController {
             await this.facebookService.sendMessageToUser(options)
             //if success then  this.chatService.addMessage(data)
             return res.redirect(`/admin/conversations/message?conversationId=${body.currentConversation}`)
+
         }
-        const secureUrl = await this.cloudinaryService
-            .uploadImage(file)
-            .then((data) => {
+        if (file.mimetype === 'application/vnd.ms-excel' || file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || file.mimetype === 'application/pdf' ||
+            file.mimetype === 'text/plain') {
+            secureUrl = await this.cloudinaryService
+                .uploadFile(file)
+                .then((data) => {
+                    return data.secure_url;
+                })
+                .catch((err) => {
+                    return {
+                        statusCode: 400,
+                        message: err.message,
+                    };
+                });
+            const options: any = {
+                recipient: receiver,
+                message: body.message,
+                messaging_type: 'RESPONSE',
+                url: secureUrl
+            }
+            await this.facebookService.sendMessageAttachmentFile(options)
+            if (body.message) {
+                await this.facebookService.sendMessageToUser(options)
+            }
+            return res.redirect(`/admin/conversations/message?conversationId=${body.currentConversation}`)
+        }
+        if (file.mimetype.startsWith('video/')) {
+            secureUrl = await this.cloudinaryService.uploadVideo(file).then((data) => {
                 return data.secure_url;
-            })
-            .catch((err) => {
+            }).catch((err) => {
                 return {
                     statusCode: 400,
                     message: err.message,
-                };
-            });
-        const options: any = {
-            recipient: receiver,
-            message: body.message,
-            messaging_type: 'RESPONSE',
-            url: secureUrl
+                }
+            })
+            const options: any = {
+                recipient: receiver,
+                message: body.message,
+                messaging_type: 'RESPONSE',
+                url: secureUrl
+            }
+            await this.facebookService.sendMessageAttachmentVideo(options)
+            if (body.message) {
+                await this.facebookService.sendMessageToUser(options)
+            }
+            return res.redirect(`/admin/conversations/message?conversationId=${body.currentConversation}`)
         }
-        //if success then  this.chatService.addMessage(data)
-        await this.facebookService.sendMessageAttachment(options)
-        if (body.message) {
-            await this.facebookService.sendMessageToUser(options)
+        if (file.mimetype.startsWith('image/')) {
+            secureUrl = await this.cloudinaryService
+                .uploadImage(file)
+                .then((data) => {
+                    return data.secure_url;
+                })
+                .catch((err) => {
+                    return {
+                        statusCode: 400,
+                        message: err.message,
+                    };
+                });
+            const options: any = {
+                recipient: receiver,
+                message: body.message,
+                messaging_type: 'RESPONSE',
+                url: secureUrl
+            }
+            await this.facebookService.sendMessageAttachmentImage(options)
+            if (body.message) {
+                await this.facebookService.sendMessageToUser(options)
+            }
+            return res.redirect(`/admin/conversations/message?conversationId=${body.currentConversation}`)
         }
-        return res.redirect(`/admin/conversations/message?conversationId=${body.currentConversation}`)
     }
 }

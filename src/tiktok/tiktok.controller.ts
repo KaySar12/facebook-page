@@ -13,7 +13,7 @@ export class TikTokController {
         const csrfState = Math.random().toString(36).substring(2);
         res.cookie('csrfState', csrfState, { maxAge: 60000 });
         let url = 'https://www.tiktok.com/v2/auth/authorize/';
-        url += `?client_key=${this.configService.get('tiktok_client_key')}`;
+        url += `?client_key=aw9lhw1om1pz0jwh`;
         url += `&scope=user.info.basic`;
         url += `&response_type=code`;
         url += `&redirect_uri=https%3A%2F%2Fviolently-distinct-trout.ngrok-free.app`;

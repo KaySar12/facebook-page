@@ -38,7 +38,7 @@ async function bootstrap() {
       name: 'acc-facebook-session',
       cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
     }),)
-    
+
   app.use(passport.initialize())
   app.use(passport.session())
   app.use(cookieParser());
@@ -89,7 +89,10 @@ async function bootstrap() {
   hbs.registerHelper("first_element", function (data: any[]) {
     return data[0];
   });
-  hbs.registerHelper('vue-js', function (options) {
+  hbs.registerHelper('loadChat', function (options) {
+    return options.fn();
+  });
+  hbs.registerHelper('sendMessage', function (options) {
     return options.fn();
   });
   app.setViewEngine('hbs');
