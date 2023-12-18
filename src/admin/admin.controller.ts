@@ -47,7 +47,6 @@ export class AdminController {
         console.log(` Current Page ID:${currentPageId}`)
         const viewData = [];
         viewData['title'] = 'Admin Page - Admin - Manage Home Page';
-
         if (req.user) {
             const userData = req.user;
             console.log(userData);
