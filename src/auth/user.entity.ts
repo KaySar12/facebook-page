@@ -16,11 +16,11 @@ import { v4 as uuid } from 'uuid';
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column('text')
+  @Column('nvarchar')
   userId: string;
-  @Column('text')
+  @Column('nvarchar')
   email: string;
-  @Column('text')
+  @Column('nvarchar')
   displayName: string;
   @CreateDateColumn()
   createdDate: Date;
