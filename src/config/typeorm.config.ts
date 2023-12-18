@@ -11,3 +11,4 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   synchronize: true,
 };
 
+
