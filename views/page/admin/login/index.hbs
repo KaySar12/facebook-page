@@ -15,6 +15,8 @@
   <link rel="stylesheet" href="../../plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+
+    <link rel="stylesheet" href="/css/app.css">
 </head>
 
 <body class="hold-transition login-page">
@@ -36,13 +38,26 @@
           <a href='/tiktok/oauth' class="btn btn-block btn-dark">
             <i class="fab fa-tiktok mr-2"></i>
             Sign in using TikTok</a>
+          <a id="reddit-login-button" onclick="redditLogin()" class="btn btn-block btn-orange">
+            <i class="fab fa-reddit mr-2"></i>
+            Sign in using Reddit
+          </a>
         </div>
+
       </div>
-      <!-- /.login-card-body -->
     </div>
+    <!-- /.login-card-body -->
+  </div>
   </div>
   <!-- /.login-box -->
   <script>
+    function redditLogin() {
+      const button = document.getElementById('reddit-login-button');
+      button.addEventListener('click', function () {
+        // Redirect to Reddit's OAuth2 authorization URL
+        window.location.href = `https://www.reddit.com/api/v1/authorize?client_id=RQtqjQ7AsDc1Mkv04h08kw&response_type=code&state=RANDOM_STRING&redirect_uri=https%3A%2F%2Fviolently-distinct-trout.ngrok-free.app%2Freddit%2Faction%2Flogin&duration=permanent&scope=mysubreddits,read,submit,identity,edit,history`;
+      });
+    }
     function facebookLogin() {
       FB.login(function (response) {
         if (response.status === 'connected') {

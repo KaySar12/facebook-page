@@ -76,7 +76,6 @@ export class AdminConversationController {
         if (conversationId) {
             const getConversationbyId = await this.facebookService.getConversationById(conversationId);
             const messages = getConversationbyId.messages.data;
-            console.log(messages);
             viewData['messages'] = messages;
             viewData['userName'] = `${user.displayName}`;
             viewData['conversationId'] = conversationId;
@@ -135,7 +134,7 @@ export class AdminConversationController {
             }
             return res.redirect(`/admin/conversations/message?conversationId=${body.currentConversation}`)
         }
-        if (file.mimetype.startsWith('video/')) {
+        if (file.mimetype === 'video/mp4') {
             secureUrl = await this.cloudinaryService.uploadVideo(file).then((data) => {
                 return data.secure_url;
             }).catch((err) => {

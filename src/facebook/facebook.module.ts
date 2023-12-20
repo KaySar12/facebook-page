@@ -6,9 +6,11 @@ import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { FacebookStrategy } from './facebook.strategy';
 import { SessionSerializer } from './facebook-session.serializer';
+import { FacebookPage } from './facebookPage.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-    imports: [HttpModule, ConfigModule, PassportModule.register({ session: true })],
+    imports: [HttpModule, ConfigModule, PassportModule.register({ session: true }), TypeOrmModule.forFeature([FacebookPage])],
     providers: [FacebookService, FacebookStrategy, SessionSerializer],
     controllers: [FacebookController],
 })

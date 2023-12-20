@@ -180,9 +180,8 @@ export class FacebookService {
         }
     }
     async getConversationById(conversationId: string) {
-        const accessToken = this.pageAccessToken || this.configService.get('default_access_token');
-        this.setCurrentPageAccessToken(accessToken);
-        console.log(accessToken);
+        const accessToken = this.pageAccessToken;
+        // this.setCurrentPageAccessToken(accessToken);
         const options = {
             method: 'GET',
             url: `https://graph.facebook.com/v18.0/${conversationId}?fields=name,id,senders,messages{message,from,to,created_time,attachments,sticker},updated_time`,
@@ -310,6 +309,8 @@ export class FacebookService {
             console.error(error.response.data);
         }
     }
+
+
     async sendMessageToUser(params: SendMessageDto) {
         const access_token = this.pageAccessToken;
         const pageId = this.getCurrentPageId() || '179668665228573';

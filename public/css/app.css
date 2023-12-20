@@ -33,3 +33,11 @@ nav {
     margin-bottom: 0 !important;
     /* Adjust margin as needed */
 }
+
+.btn-orange {
+    background-color: #FF5700;
+    /* Replace with the official Reddit color */
+    color: #FFFFFF;
+    /* Text color, you may need to adjust this based on the background color */
+    /* Add any additional styling as needed */
+}

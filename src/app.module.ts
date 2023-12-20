@@ -10,15 +10,17 @@ import { HttpModule } from '@nestjs/axios';
 import { AdminModule } from './admin/admin.module';
 import { FacebookService } from './facebook/facebook.service';
 import { PassportModule } from '@nestjs/passport';
-import { UserModule } from './auth/user.module';
+import { UserModule } from './user/user.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { CloudinaryService } from './cloudinary/cloudinary.service';
 import { TikTokModule } from './tiktok/tiktok.module';
+import { RedditModule } from './reddit/reddit.module';
 @Global()
 @Module({
   imports: [PassportModule.register({ session: true }),
     HttpModule,
     FacebookModule,
+    RedditModule,
     TikTokModule,
   TypeOrmModule.forRoot(typeOrmConfig),
   ConfigModule.forRoot({

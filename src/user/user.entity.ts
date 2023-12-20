@@ -1,3 +1,4 @@
+import { FacebookPage } from 'src/facebook/facebookPage.entity';
 import {
   AfterInsert,
   AfterRemove,
@@ -7,6 +8,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -22,6 +24,9 @@ export class User extends BaseEntity {
   email: string;
   @Column('nvarchar')
   displayName: string;
+  @OneToMany(() => FacebookPage, (facebookPage) => facebookPage.user, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  facebookPages: FacebookPage[]
+
   @CreateDateColumn()
   createdDate: Date;
   @BeforeInsert()
